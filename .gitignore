@@ -39,7 +39,6 @@ keys/
 *.pem
 
 # Development files
-.air.toml
 tmp/
 
 # Debug files

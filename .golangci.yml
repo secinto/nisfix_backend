@@ -1,0 +1,203 @@
+# golangci-lint configuration
+# https://golangci-lint.run/usage/configuration/
+
+run:
+  timeout: 5m
+  issues-exit-code: 1
+  tests: true
+  modules-download-mode: readonly
+
+output:
+  formats:
+    - format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+  sort-results: true
+
+linters:
+  enable:
+    # Default linters
+    - errcheck        # Check for unchecked errors
+    - gosimple        # Simplify code
+    - govet           # Report suspicious constructs
+    - ineffassign     # Detect ineffectual assignments
+    - staticcheck     # Static analysis checks
+    - unused          # Check for unused code
+
+    # Additional linters
+    - bodyclose       # Check HTTP response body is closed
+    - contextcheck    # Check context.Context is passed correctly
+    - dupl            # Code duplication detection
+    - durationcheck   # Check for two durations multiplied together
+    - errname         # Check error naming conventions
+    - errorlint       # Find issues with error wrapping
+    - exhaustive      # Check exhaustiveness of enum switch statements
+    - copyloopvar     # Detect loop variable capture issues
+    - gocognit        # Cognitive complexity
+    - goconst         # Find repeated strings that could be constants
+    - gocritic        # Comprehensive linter
+    - gofmt           # Check formatting
+    - goimports       # Check imports
+    - gosec           # Security checks
+    - misspell        # Find misspellings
+    - nakedret        # Find naked returns
+    - nilerr          # Find returning nil with non-nil error
+    - nilnil          # Check for nil,nil returns
+    - noctx           # Find HTTP requests without context
+    - prealloc        # Suggest preallocations
+    - predeclared     # Find shadowed predeclared identifiers
+    - revive          # Fast, configurable linter
+    - sqlclosecheck   # Check sql.Rows/Stmt is closed
+    - stylecheck      # Style checks
+    - tenv            # Detect os.Setenv in tests
+    - tparallel       # Detect inappropriate t.Parallel()
+    - unconvert       # Remove unnecessary conversions
+    - unparam         # Find unused function parameters
+    - whitespace      # Check for unnecessary whitespace
+
+  disable:
+    - funlen          # Too restrictive for handlers
+    - gochecknoglobals # We use package-level vars intentionally
+    - gochecknoinits  # We use init() for test setup
+    - godox           # Allow TODO/FIXME comments
+    - gomnd           # Magic numbers are sometimes fine
+    - lll             # Line length - handled by editor
+    - wsl             # Whitespace linter too strict
+
+linters-settings:
+  dupl:
+    threshold: 150
+
+  errcheck:
+    check-type-assertions: true
+    check-blank: true
+    exclude-functions:
+      - io.Copy
+      - io.WriteString
+      - (*bytes.Buffer).WriteString
+
+  errorlint:
+    errorf: true
+    asserts: true
+    comparison: true
+
+  exhaustive:
+    default-signifies-exhaustive: true
+
+  gocognit:
+    min-complexity: 25
+
+  goconst:
+    min-len: 3
+    min-occurrences: 3
+
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - style
+      - performance
+    disabled-checks:
+      - hugeParam      # Allow large structs by value
+      - rangeValCopy   # Allow range value copies
+
+  gofmt:
+    simplify: true
+
+  goimports:
+    local-prefixes: github.com/checkfix-tools/nisfix_backend
+
+  gosec:
+    excludes:
+      - G104 # Unhandled errors (covered by errcheck)
+      - G304 # File path from variable (intentional in config)
+
+  govet:
+    enable-all: true
+    disable:
+      - fieldalignment # Don't care about struct field alignment
+
+  misspell:
+    locale: US
+
+  nakedret:
+    max-func-lines: 30
+
+  prealloc:
+    simple: true
+    range-loops: true
+    for-loops: false
+
+  revive:
+    rules:
+      - name: blank-imports
+      - name: context-as-argument
+      - name: context-keys-type
+      - name: dot-imports
+      - name: error-naming
+      - name: error-return
+      - name: error-strings
+      - name: errorf
+      - name: exported
+      - name: increment-decrement
+      - name: indent-error-flow
+      - name: package-comments
+      - name: range
+      - name: receiver-naming
+      - name: time-naming
+      - name: unexported-return
+      - name: var-declaration
+      - name: var-naming
+
+  staticcheck:
+    checks: ["all"]
+
+  stylecheck:
+    checks: ["all", "-ST1000", "-ST1003"]
+    http-status-code-whitelist: []
+
+  unparam:
+    check-exported: false
+
+issues:
+  exclude-rules:
+    # Exclude some linters from running on tests
+    - path: _test\.go
+      linters:
+        - dupl
+        - errcheck
+        - gosec
+        - goconst
+        - gocognit
+
+    # Exclude known patterns
+    - path: docs/
+      linters:
+        - all
+
+    # Allow dot imports in tests for testify
+    - path: _test\.go
+      text: "dot-imports"
+      linters:
+        - revive
+
+    # Allow package comments to be missing in internal packages
+    - path: internal/
+      text: "package-comments"
+      linters:
+        - revive
+
+  exclude-use-default: false
+  exclude-case-sensitive: false
+  max-issues-per-linter: 50
+  max-same-issues: 10
+  new: false
+
+severity:
+  default-severity: warning
+  rules:
+    - linters:
+        - gosec
+      severity: error
+    - linters:
+        - govet
+      severity: error
