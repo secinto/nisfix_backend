@@ -23,7 +23,11 @@
       "Bash(golangci-lint run:*)",
       "Bash(gofmt:*)",
       "Bash(goimports:*)",
-      "Bash(go install:*)"
+      "Bash(go install:*)",
+      "Bash(bd stats:*)",
+      "Bash(bd create:*)",
+      "Bash(bd list:*)",
+      "Bash(bd sync:*)"
     ]
   }
 }
