@@ -1,0 +1,49 @@
+# =============================================================================
+# NisFix Backend .gitignore
+# =============================================================================
+
+# Build outputs
+bin/
+dist/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test outputs
+coverage.out
+coverage.html
+*.test
+
+# Dependencies (use go mod)
+vendor/
+
+# IDE/Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files (contain secrets)
+.env
+.env.local
+.env.*.local
+
+# JWT Keys (contain secrets)
+keys/
+*.pem
+
+# Development files
+.air.toml
+tmp/
+
+# Debug files
+__debug_bin*
+
+# Local data
+data/

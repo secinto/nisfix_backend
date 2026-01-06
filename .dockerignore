@@ -1,0 +1,70 @@
+# =============================================================================
+# Docker Ignore File
+# Excludes files from the Docker build context
+# =============================================================================
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Build outputs
+bin/
+dist/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test outputs
+coverage.out
+coverage.html
+*.test
+
+# IDE/Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation (not needed in image)
+*.md
+!README.md
+docs/
+implementation-plan.md
+
+# Local configuration
+.env
+.env.local
+.env.*.local
+
+# Keys (mounted at runtime)
+keys/
+*.pem
+
+# Development files
+.air.toml
+tmp/
+
+# Plans
+.claude/
+
+# Docker files (avoid recursion)
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Makefile (not needed in image)
+Makefile
+
+# Scripts (for local use)
+scripts/
+
+# Test fixtures
+*_test.go
+testdata/

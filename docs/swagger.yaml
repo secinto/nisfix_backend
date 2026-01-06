@@ -1,0 +1,3447 @@
+basePath: /api/v1
+definitions:
+  internal_handlers.AddressResponse:
+    properties:
+      city:
+        type: string
+      country:
+        type: string
+      postal_code:
+        type: string
+      street:
+        type: string
+    type: object
+  internal_handlers.CategoryGradeResponse:
+    properties:
+      category:
+        type: string
+      grade:
+        type: string
+      score:
+        type: integer
+    type: object
+  internal_handlers.CheckFixStatusResponse:
+    properties:
+      account_id:
+        type: string
+      domain:
+        type: string
+      is_linked:
+        type: boolean
+      latest_grade:
+        type: string
+      latest_score:
+        type: integer
+      latest_verified_at:
+        type: string
+      linked_at:
+        type: string
+      verification:
+        $ref: '#/definitions/internal_handlers.CheckFixVerificationResponse'
+    type: object
+  internal_handlers.CheckFixSubmissionResponse:
+    properties:
+      grade:
+        type: string
+      message:
+        type: string
+      passed:
+        type: boolean
+      verification:
+        $ref: '#/definitions/internal_handlers.CheckFixVerificationResponse'
+    type: object
+  internal_handlers.CheckFixVerificationResponse:
+    properties:
+      category_grades:
+        items:
+          $ref: '#/definitions/internal_handlers.CategoryGradeResponse'
+        type: array
+      critical_findings:
+        type: integer
+      days_until_expiry:
+        type: integer
+      domain:
+        type: string
+      domain_match:
+        type: boolean
+      expires_at:
+        type: string
+      high_findings:
+        type: integer
+      id:
+        type: string
+      is_valid:
+        type: boolean
+      low_findings:
+        type: integer
+      medium_findings:
+        type: integer
+      overall_grade:
+        type: string
+      overall_score:
+        type: integer
+      report_date:
+        type: string
+      report_hash:
+        type: string
+      verified_at:
+        type: string
+      verified_domain:
+        type: string
+    type: object
+  internal_handlers.CompanyRelationshipResponse:
+    properties:
+      accepted_at:
+        type: string
+      classification:
+        type: string
+      company_id:
+        type: string
+      company_name:
+        type: string
+      id:
+        type: string
+      invited_at:
+        type: string
+      pending_requirements:
+        type: integer
+      status:
+        type: string
+    type: object
+  internal_handlers.CreateQuestionAPIRequest:
+    properties:
+      description:
+        type: string
+      help_text:
+        type: string
+      is_must_pass:
+        type: boolean
+      options:
+        items:
+          $ref: '#/definitions/internal_handlers.OptionRequest'
+        type: array
+      text:
+        type: string
+      topic_id:
+        type: string
+      type:
+        type: string
+      weight:
+        type: integer
+    required:
+    - text
+    - type
+    type: object
+  internal_handlers.CreateQuestionnaireRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      passing_score:
+        type: integer
+      scoring_mode:
+        type: string
+      template_id:
+        type: string
+      topics:
+        items:
+          $ref: '#/definitions/internal_handlers.TopicRequest'
+        type: array
+    required:
+    - name
+    type: object
+  internal_handlers.CreateRequirementAPIRequest:
+    properties:
+      description:
+        type: string
+      due_date:
+        type: string
+      max_report_age_days:
+        type: integer
+      minimum_grade:
+        type: string
+      passing_score:
+        type: integer
+      priority:
+        type: string
+      questionnaire_id:
+        type: string
+      relationship_id:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+    required:
+    - relationship_id
+    - title
+    - type
+    type: object
+  internal_handlers.DeclineInvitationRequest:
+    properties:
+      reason:
+        type: string
+    type: object
+  internal_handlers.DetailedHealthResponse:
+    properties:
+      services:
+        additionalProperties:
+          $ref: '#/definitions/internal_handlers.Service'
+        type: object
+      status:
+        type: string
+      system:
+        $ref: '#/definitions/internal_handlers.SystemInfo'
+      timestamp:
+        type: string
+      uptime:
+        type: string
+      version:
+        type: string
+    type: object
+  internal_handlers.DraftAnswerResponse:
+    properties:
+      question_id:
+        type: string
+      saved_at:
+        type: string
+      selected_options:
+        items:
+          type: string
+        type: array
+      text_answer:
+        type: string
+    type: object
+  internal_handlers.ErrorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+    type: object
+  internal_handlers.GetMeResponse:
+    properties:
+      organization:
+        $ref: '#/definitions/internal_handlers.OrgResponse'
+      user:
+        $ref: '#/definitions/internal_handlers.UserResponse'
+    type: object
+  internal_handlers.HealthResponse:
+    properties:
+      services:
+        additionalProperties:
+          type: string
+        type: object
+      status:
+        type: string
+      timestamp:
+        type: string
+      version:
+        type: string
+    type: object
+  internal_handlers.InviteSupplierRequest:
+    properties:
+      classification:
+        type: string
+      contract_ref:
+        type: string
+      email:
+        type: string
+      notes:
+        type: string
+      services_provided:
+        items:
+          type: string
+        type: array
+    required:
+    - email
+    type: object
+  internal_handlers.LinkAccountRequest:
+    properties:
+      account_id:
+        type: string
+    required:
+    - account_id
+    type: object
+  internal_handlers.LogoutResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  internal_handlers.OptionRequest:
+    properties:
+      id:
+        type: string
+      is_correct:
+        type: boolean
+      order:
+        type: integer
+      points:
+        type: integer
+      text:
+        type: string
+    required:
+    - text
+    type: object
+  internal_handlers.OptionResponse:
+    properties:
+      id:
+        type: string
+      is_correct:
+        type: boolean
+      order:
+        type: integer
+      points:
+        type: integer
+      text:
+        type: string
+    type: object
+  internal_handlers.OrgResponse:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      slug:
+        type: string
+      type:
+        type: string
+    type: object
+  internal_handlers.OrganizationResponse:
+    properties:
+      address:
+        $ref: '#/definitions/internal_handlers.AddressResponse'
+      contact_email:
+        type: string
+      contact_phone:
+        type: string
+      created_at:
+        type: string
+      domain:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      settings:
+        $ref: '#/definitions/internal_handlers.OrganizationSettingsResponse'
+      slug:
+        type: string
+      type:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  internal_handlers.OrganizationSettingsResponse:
+    properties:
+      default_due_days:
+        type: integer
+      default_language:
+        type: string
+      min_checkfix_grade:
+        type: string
+      notification_emails:
+        items:
+          type: string
+        type: array
+      notifications_enabled:
+        type: boolean
+      require_checkfix:
+        type: boolean
+    type: object
+  internal_handlers.PaginatedQuestionnairesResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/internal_handlers.QuestionnaireResponse'
+        type: array
+      limit:
+        type: integer
+      page:
+        type: integer
+      total_count:
+        type: integer
+      total_pages:
+        type: integer
+    type: object
+  internal_handlers.PaginatedRelationshipsResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/internal_handlers.RelationshipResponse'
+        type: array
+      limit:
+        type: integer
+      page:
+        type: integer
+      total_count:
+        type: integer
+      total_pages:
+        type: integer
+    type: object
+  internal_handlers.PaginatedRequirementsResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/internal_handlers.RequirementResponse'
+        type: array
+      limit:
+        type: integer
+      page:
+        type: integer
+      total_count:
+        type: integer
+      total_pages:
+        type: integer
+    type: object
+  internal_handlers.PaginatedSupplierRequirementsResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/internal_handlers.SupplierRequirementResponse'
+        type: array
+      limit:
+        type: integer
+      page:
+        type: integer
+      total_count:
+        type: integer
+      total_pages:
+        type: integer
+    type: object
+  internal_handlers.PaginatedTemplatesResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/internal_handlers.TemplateResponse'
+        type: array
+      limit:
+        type: integer
+      page:
+        type: integer
+      total_count:
+        type: integer
+      total_pages:
+        type: integer
+    type: object
+  internal_handlers.QuestionResponse:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      help_text:
+        type: string
+      id:
+        type: string
+      is_must_pass:
+        type: boolean
+      max_points:
+        type: integer
+      options:
+        items:
+          $ref: '#/definitions/internal_handlers.OptionResponse'
+        type: array
+      order:
+        type: integer
+      questionnaire_id:
+        type: string
+      text:
+        type: string
+      topic_id:
+        type: string
+      type:
+        type: string
+      updated_at:
+        type: string
+      weight:
+        type: integer
+    type: object
+  internal_handlers.QuestionnaireResponse:
+    properties:
+      company_id:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      max_possible_score:
+        type: integer
+      name:
+        type: string
+      passing_score:
+        type: integer
+      published_at:
+        type: string
+      question_count:
+        type: integer
+      scoring_mode:
+        type: string
+      status:
+        type: string
+      template_id:
+        type: string
+      topics:
+        items:
+          $ref: '#/definitions/internal_handlers.TopicResponse'
+        type: array
+      updated_at:
+        type: string
+      version:
+        type: integer
+    type: object
+  internal_handlers.QuestionnaireStatsResponse:
+    properties:
+      archived:
+        type: integer
+      draft:
+        type: integer
+      published:
+        type: integer
+      total:
+        type: integer
+    type: object
+  internal_handlers.QuestionnaireWithQuestionsResponse:
+    properties:
+      questionnaire:
+        $ref: '#/definitions/internal_handlers.QuestionnaireResponse'
+      questions:
+        items:
+          $ref: '#/definitions/internal_handlers.QuestionResponse'
+        type: array
+    type: object
+  internal_handlers.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+  internal_handlers.RefreshTokenResponse:
+    properties:
+      access_token:
+        type: string
+      expires_at:
+        type: integer
+      expires_in:
+        type: integer
+      refresh_token:
+        type: string
+    type: object
+  internal_handlers.RelationshipResponse:
+    properties:
+      accepted_at:
+        type: string
+      classification:
+        type: string
+      company_id:
+        type: string
+      contract_ref:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      invited_at:
+        type: string
+      invited_email:
+        type: string
+      notes:
+        type: string
+      services_provided:
+        items:
+          type: string
+        type: array
+      status:
+        type: string
+      status_history:
+        items:
+          $ref: '#/definitions/internal_handlers.StatusChangeResponse'
+        type: array
+      supplier_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  internal_handlers.ReorderQuestionsRequest:
+    properties:
+      orders:
+        additionalProperties:
+          type: integer
+        type: object
+    required:
+    - orders
+    type: object
+  internal_handlers.RequestMagicLinkRequest:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
+  internal_handlers.RequestMagicLinkResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  internal_handlers.RequirementResponse:
+    properties:
+      assigned_at:
+        type: string
+      company_id:
+        type: string
+      created_at:
+        type: string
+      days_until_due:
+        type: integer
+      description:
+        type: string
+      due_date:
+        type: string
+      id:
+        type: string
+      is_overdue:
+        type: boolean
+      max_report_age_days:
+        type: integer
+      minimum_grade:
+        type: string
+      passing_score:
+        type: integer
+      priority:
+        type: string
+      questionnaire_id:
+        type: string
+      relationship_id:
+        type: string
+      status:
+        type: string
+      status_history:
+        items:
+          $ref: '#/definitions/internal_handlers.RequirementStatusChangeResp'
+        type: array
+      supplier_id:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  internal_handlers.RequirementStatsResponse:
+    properties:
+      approved:
+        type: integer
+      expired:
+        type: integer
+      in_progress:
+        type: integer
+      overdue:
+        type: integer
+      pending:
+        type: integer
+      rejected:
+        type: integer
+      submitted:
+        type: integer
+      total:
+        type: integer
+    type: object
+  internal_handlers.RequirementStatusChangeResp:
+    properties:
+      changed_at:
+        type: string
+      from_status:
+        type: string
+      reason:
+        type: string
+      to_status:
+        type: string
+    type: object
+  internal_handlers.ReviewActionRequest:
+    properties:
+      notes:
+        type: string
+      reason:
+        type: string
+    type: object
+  internal_handlers.ReviewResponseDetails:
+    properties:
+      grade:
+        type: string
+      id:
+        type: string
+      is_reviewed:
+        type: boolean
+      is_submitted:
+        type: boolean
+      max_score:
+        type: integer
+      passed:
+        type: boolean
+      review_notes:
+        type: string
+      reviewed_at:
+        type: string
+      score:
+        type: integer
+      started_at:
+        type: string
+      submitted_at:
+        type: string
+    type: object
+  internal_handlers.ReviewSubmissionDetails:
+    properties:
+      answers:
+        items:
+          $ref: '#/definitions/internal_handlers.SubmissionAnswerResponse'
+        type: array
+      completion_time_minutes:
+        type: integer
+      id:
+        type: string
+      max_possible_score:
+        type: integer
+      must_pass_failed:
+        type: boolean
+      passed:
+        type: boolean
+      percentage_score:
+        type: number
+      topic_scores:
+        items:
+          $ref: '#/definitions/internal_handlers.TopicScoreResponse'
+        type: array
+      total_score:
+        type: integer
+    type: object
+  internal_handlers.ReviewSubmissionResponse:
+    properties:
+      requirement:
+        $ref: '#/definitions/internal_handlers.RequirementResponse'
+      response:
+        $ref: '#/definitions/internal_handlers.ReviewResponseDetails'
+      submission:
+        $ref: '#/definitions/internal_handlers.ReviewSubmissionDetails'
+    type: object
+  internal_handlers.SaveDraftAnswerAPIRequest:
+    properties:
+      question_id:
+        type: string
+      selected_options:
+        items:
+          type: string
+        type: array
+      text_answer:
+        type: string
+    required:
+    - question_id
+    type: object
+  internal_handlers.SaveDraftRequest:
+    properties:
+      answers:
+        items:
+          $ref: '#/definitions/internal_handlers.SaveDraftAnswerAPIRequest'
+        type: array
+    required:
+    - answers
+    type: object
+  internal_handlers.Service:
+    properties:
+      description:
+        type: string
+      latency:
+        type: string
+      status:
+        type: string
+    type: object
+  internal_handlers.StatusActionRequest:
+    properties:
+      reason:
+        type: string
+    type: object
+  internal_handlers.StatusChangeResponse:
+    properties:
+      changed_at:
+        type: string
+      from_status:
+        type: string
+      reason:
+        type: string
+      to_status:
+        type: string
+    type: object
+  internal_handlers.SubmissionAnswerResponse:
+    properties:
+      is_must_pass_met:
+        type: boolean
+      max_points:
+        type: integer
+      points_earned:
+        type: integer
+      question_id:
+        type: string
+      selected_options:
+        items:
+          type: string
+        type: array
+      text_answer:
+        type: string
+    type: object
+  internal_handlers.SubmissionResultResponse:
+    properties:
+      max_score:
+        type: integer
+      passed:
+        type: boolean
+      percentage:
+        type: number
+      score:
+        type: integer
+      submission_id:
+        type: string
+    type: object
+  internal_handlers.SubmitAnswerAPIRequest:
+    properties:
+      question_id:
+        type: string
+      selected_options:
+        items:
+          type: string
+        type: array
+      text_answer:
+        type: string
+    required:
+    - question_id
+    type: object
+  internal_handlers.SubmitCheckFixRequest:
+    properties:
+      report_hash:
+        type: string
+    required:
+    - report_hash
+    type: object
+  internal_handlers.SubmitResponseRequest:
+    properties:
+      answers:
+        items:
+          $ref: '#/definitions/internal_handlers.SubmitAnswerAPIRequest'
+        type: array
+    required:
+    - answers
+    type: object
+  internal_handlers.SupplierDashboardResponse:
+    properties:
+      overdue_requirements:
+        type: integer
+      pending_invitations:
+        type: integer
+      pending_requirements:
+        type: integer
+      recent_requirements:
+        items:
+          $ref: '#/definitions/internal_handlers.SupplierRequirementResponse'
+        type: array
+      submitted_requirements:
+        type: integer
+      total_companies:
+        type: integer
+    type: object
+  internal_handlers.SupplierRequirementResponse:
+    properties:
+      assigned_at:
+        type: string
+      company_id:
+        type: string
+      company_name:
+        type: string
+      created_at:
+        type: string
+      days_until_due:
+        type: integer
+      description:
+        type: string
+      due_date:
+        type: string
+      id:
+        type: string
+      is_overdue:
+        type: boolean
+      minimum_grade:
+        type: string
+      passing_score:
+        type: integer
+      priority:
+        type: string
+      questionnaire_id:
+        type: string
+      response_id:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+    type: object
+  internal_handlers.SupplierResponseResponse:
+    properties:
+      draft_answer_count:
+        type: integer
+      draft_answers:
+        items:
+          $ref: '#/definitions/internal_handlers.DraftAnswerResponse'
+        type: array
+      grade:
+        type: string
+      id:
+        type: string
+      is_submitted:
+        type: boolean
+      max_score:
+        type: integer
+      passed:
+        type: boolean
+      requirement_id:
+        type: string
+      score:
+        type: integer
+      started_at:
+        type: string
+      submitted_at:
+        type: string
+      supplier_id:
+        type: string
+    type: object
+  internal_handlers.SupplierStatsResponse:
+    properties:
+      active:
+        type: integer
+      critical:
+        type: integer
+      important:
+        type: integer
+      pending:
+        type: integer
+      standard:
+        type: integer
+      suspended:
+        type: integer
+      total:
+        type: integer
+    type: object
+  internal_handlers.SystemInfo:
+    properties:
+      go_version:
+        type: string
+      mem_alloc_mb:
+        type: number
+      num_cpu:
+        type: integer
+      num_goroutine:
+        type: integer
+    type: object
+  internal_handlers.TemplateResponse:
+    properties:
+      category:
+        type: string
+      created_at:
+        type: string
+      default_passing_score:
+        type: integer
+      description:
+        type: string
+      estimated_minutes:
+        type: integer
+      id:
+        type: string
+      is_system:
+        type: boolean
+      name:
+        type: string
+      published_at:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      topics:
+        items:
+          $ref: '#/definitions/internal_handlers.TemplateTopicResponse'
+        type: array
+      updated_at:
+        type: string
+      usage_count:
+        type: integer
+      version:
+        type: string
+    type: object
+  internal_handlers.TemplateTopicResponse:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      order:
+        type: integer
+    type: object
+  internal_handlers.TopicRequest:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      order:
+        type: integer
+    required:
+    - name
+    type: object
+  internal_handlers.TopicResponse:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      order:
+        type: integer
+    type: object
+  internal_handlers.TopicScoreResponse:
+    properties:
+      max_score:
+        type: integer
+      percentage_score:
+        type: number
+      score:
+        type: integer
+      topic_id:
+        type: string
+      topic_name:
+        type: string
+    type: object
+  internal_handlers.UpdateAddressRequest:
+    properties:
+      city:
+        type: string
+      country:
+        type: string
+      postal_code:
+        type: string
+      street:
+        type: string
+    type: object
+  internal_handlers.UpdateClassificationRequest:
+    properties:
+      classification:
+        type: string
+    required:
+    - classification
+    type: object
+  internal_handlers.UpdateDetailsRequest:
+    properties:
+      contract_ref:
+        type: string
+      notes:
+        type: string
+      services_provided:
+        items:
+          type: string
+        type: array
+    type: object
+  internal_handlers.UpdateOrganizationRequest:
+    properties:
+      address:
+        $ref: '#/definitions/internal_handlers.UpdateAddressRequest'
+      contact_email:
+        type: string
+      contact_phone:
+        type: string
+      domain:
+        type: string
+      name:
+        type: string
+      settings:
+        $ref: '#/definitions/internal_handlers.UpdateSettingsRequest'
+    type: object
+  internal_handlers.UpdateQuestionAPIRequest:
+    properties:
+      description:
+        type: string
+      help_text:
+        type: string
+      is_must_pass:
+        type: boolean
+      options:
+        items:
+          $ref: '#/definitions/internal_handlers.OptionRequest'
+        type: array
+      text:
+        type: string
+      topic_id:
+        type: string
+      weight:
+        type: integer
+    type: object
+  internal_handlers.UpdateQuestionnaireRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      passing_score:
+        type: integer
+      topics:
+        items:
+          $ref: '#/definitions/internal_handlers.TopicRequest'
+        type: array
+    type: object
+  internal_handlers.UpdateRequirementAPIRequest:
+    properties:
+      description:
+        type: string
+      due_date:
+        type: string
+      max_report_age_days:
+        type: integer
+      minimum_grade:
+        type: string
+      passing_score:
+        type: integer
+      priority:
+        type: string
+      title:
+        type: string
+    type: object
+  internal_handlers.UpdateSettingsRequest:
+    properties:
+      default_due_days:
+        type: integer
+      default_language:
+        type: string
+      min_checkfix_grade:
+        type: string
+      notification_emails:
+        items:
+          type: string
+        type: array
+      notifications_enabled:
+        type: boolean
+      require_checkfix:
+        type: boolean
+    type: object
+  internal_handlers.UserResponse:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      role:
+        type: string
+    type: object
+  internal_handlers.VerifyMagicLinkRequest:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
+  internal_handlers.VerifyMagicLinkResponse:
+    properties:
+      access_token:
+        type: string
+      expires_at:
+        type: integer
+      expires_in:
+        type: integer
+      organization:
+        $ref: '#/definitions/internal_handlers.OrgResponse'
+      refresh_token:
+        type: string
+      user:
+        $ref: '#/definitions/internal_handlers.UserResponse'
+    type: object
+  internal_handlers.VerifyReportRequest:
+    properties:
+      report_hash:
+        type: string
+    required:
+    - report_hash
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@nisfix.io
+    name: NisFix Support
+  description: B2B Supplier Security Portal API - Companies manage supplier security
+    requirements through questionnaires and CheckFix reports
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: NisFix Backend API
+  version: "1.0"
+paths:
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Invalidates the user's session (client should discard tokens)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.LogoutResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Logout user
+      tags:
+      - Auth
+  /auth/magic-link:
+    post:
+      consumes:
+      - application/json
+      description: Sends a magic link to the provided email for passwordless authentication
+      parameters:
+      - description: Magic link request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.RequestMagicLinkRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.RequestMagicLinkResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Request a magic link
+      tags:
+      - Auth
+  /auth/me:
+    get:
+      consumes:
+      - application/json
+      description: Returns the current authenticated user and their organization
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.GetMeResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get current user
+      tags:
+      - Auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Uses refresh token to generate new access/refresh token pair
+      parameters:
+      - description: Refresh token request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.RefreshTokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Refresh access token
+      tags:
+      - Auth
+  /auth/verify:
+    post:
+      consumes:
+      - application/json
+      description: Validates the magic link token and returns access/refresh tokens
+      parameters:
+      - description: Token verification request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.VerifyMagicLinkRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.VerifyMagicLinkResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Verify a magic link token
+      tags:
+      - Auth
+  /health:
+    get:
+      description: Returns basic health status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.HealthResponse'
+      summary: Health check endpoint
+      tags:
+      - Health
+  /health/detailed:
+    get:
+      description: Returns detailed health information including system stats
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.DetailedHealthResponse'
+      summary: Detailed health check
+      tags:
+      - Health
+  /health/live:
+    get:
+      description: Indicates the service is running (for Kubernetes liveness probe)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.HealthResponse'
+      summary: Liveness check endpoint
+      tags:
+      - Health
+  /health/ping:
+    get:
+      description: Simple ping endpoint for basic availability check
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Ping endpoint
+      tags:
+      - Health
+  /health/ready:
+    get:
+      description: Checks if the service is ready to receive traffic (dependencies
+        are healthy)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.HealthResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/internal_handlers.HealthResponse'
+      summary: Readiness check endpoint
+      tags:
+      - Health
+  /organization:
+    get:
+      consumes:
+      - application/json
+      description: Gets the current user's organization details
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.OrganizationResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get current organization
+      tags:
+      - Organization
+    patch:
+      consumes:
+      - application/json
+      description: Updates the current user's organization
+      parameters:
+      - description: Organization updates
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.UpdateOrganizationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.OrganizationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update organization
+      tags:
+      - Organization
+  /organization/settings:
+    get:
+      consumes:
+      - application/json
+      description: Gets the current organization's settings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.OrganizationSettingsResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get organization settings
+      tags:
+      - Organization
+    patch:
+      consumes:
+      - application/json
+      description: Updates the current organization's settings
+      parameters:
+      - description: Settings updates
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.UpdateSettingsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.OrganizationSettingsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update organization settings
+      tags:
+      - Organization
+  /questionnaires:
+    get:
+      consumes:
+      - application/json
+      description: Lists all questionnaires for the company
+      parameters:
+      - description: Filter by status
+        in: query
+        name: status
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.PaginatedQuestionnairesResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List questionnaires
+      tags:
+      - Questionnaires
+    post:
+      consumes:
+      - application/json
+      description: Creates a new questionnaire, optionally from a template
+      parameters:
+      - description: Create request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.CreateQuestionnaireRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_handlers.QuestionnaireResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a questionnaire
+      tags:
+      - Questionnaires
+  /questionnaires/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a draft questionnaire
+      parameters:
+      - description: Questionnaire ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete questionnaire
+      tags:
+      - Questionnaires
+    get:
+      consumes:
+      - application/json
+      description: Gets a questionnaire with its questions
+      parameters:
+      - description: Questionnaire ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.QuestionnaireWithQuestionsResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get questionnaire
+      tags:
+      - Questionnaires
+    patch:
+      consumes:
+      - application/json
+      description: Updates a questionnaire (draft only)
+      parameters:
+      - description: Questionnaire ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.UpdateQuestionnaireRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.QuestionnaireResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update questionnaire
+      tags:
+      - Questionnaires
+  /questionnaires/{id}/archive:
+    post:
+      consumes:
+      - application/json
+      description: Archives a published questionnaire
+      parameters:
+      - description: Questionnaire ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.QuestionnaireResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Archive questionnaire
+      tags:
+      - Questionnaires
+  /questionnaires/{id}/publish:
+    post:
+      consumes:
+      - application/json
+      description: Publishes a draft questionnaire
+      parameters:
+      - description: Questionnaire ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.QuestionnaireResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Publish questionnaire
+      tags:
+      - Questionnaires
+  /questionnaires/{id}/questions:
+    post:
+      consumes:
+      - application/json
+      description: Adds a question to a draft questionnaire
+      parameters:
+      - description: Questionnaire ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Question to add
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.CreateQuestionAPIRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_handlers.QuestionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add question to questionnaire
+      tags:
+      - Questionnaires
+  /questionnaires/{id}/questions/reorder:
+    post:
+      consumes:
+      - application/json
+      description: Reorders questions in a draft questionnaire
+      parameters:
+      - description: Questionnaire ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Question orders
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.ReorderQuestionsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Reorder questions
+      tags:
+      - Questionnaires
+  /questionnaires/stats:
+    get:
+      consumes:
+      - application/json
+      description: Gets questionnaire statistics for the company
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.QuestionnaireStatsResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get questionnaire statistics
+      tags:
+      - Questionnaires
+  /questions/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a question from a draft questionnaire
+      parameters:
+      - description: Question ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete question
+      tags:
+      - Questionnaires
+    patch:
+      consumes:
+      - application/json
+      description: Updates a question in a draft questionnaire
+      parameters:
+      - description: Question ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.UpdateQuestionAPIRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.QuestionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update question
+      tags:
+      - Questionnaires
+  /requirements:
+    get:
+      consumes:
+      - application/json
+      description: Lists all requirements for the company
+      parameters:
+      - description: Filter by status
+        in: query
+        name: status
+        type: string
+      - description: Filter by relationship
+        in: query
+        name: relationship_id
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.PaginatedRequirementsResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List requirements
+      tags:
+      - Requirements
+    post:
+      consumes:
+      - application/json
+      description: Creates a new requirement for a supplier
+      parameters:
+      - description: Create request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.CreateRequirementAPIRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_handlers.RequirementResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a requirement
+      tags:
+      - Requirements
+  /requirements/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Gets details of a specific requirement
+      parameters:
+      - description: Requirement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.RequirementResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get requirement details
+      tags:
+      - Requirements
+    patch:
+      consumes:
+      - application/json
+      description: Updates a requirement (while pending)
+      parameters:
+      - description: Requirement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.UpdateRequirementAPIRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.RequirementResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update requirement
+      tags:
+      - Requirements
+  /requirements/{id}/approve:
+    post:
+      consumes:
+      - application/json
+      description: Approves a submitted requirement
+      parameters:
+      - description: Requirement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Approval notes
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/internal_handlers.ReviewActionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.RequirementResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Approve requirement
+      tags:
+      - Review
+  /requirements/{id}/checkfix:
+    get:
+      consumes:
+      - application/json
+      description: Gets the CheckFix verification details for a requirement (company
+        view)
+      parameters:
+      - description: Requirement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.CheckFixVerificationResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get CheckFix verification for a requirement
+      tags:
+      - CheckFix
+  /requirements/{id}/reject:
+    post:
+      consumes:
+      - application/json
+      description: Rejects a submitted requirement
+      parameters:
+      - description: Requirement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Rejection reason
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.ReviewActionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.RequirementResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Reject requirement
+      tags:
+      - Review
+  /requirements/{id}/request-revision:
+    post:
+      consumes:
+      - application/json
+      description: Requests revision for a submitted requirement
+      parameters:
+      - description: Requirement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Revision reason
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.ReviewActionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.RequirementResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Request revision
+      tags:
+      - Review
+  /requirements/{id}/review:
+    get:
+      consumes:
+      - application/json
+      description: Gets the submission details for reviewing
+      parameters:
+      - description: Requirement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.ReviewSubmissionResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get submission for review
+      tags:
+      - Review
+  /requirements/stats:
+    get:
+      consumes:
+      - application/json
+      description: Gets requirement statistics for the company
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.RequirementStatsResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get requirement statistics
+      tags:
+      - Requirements
+  /supplier/checkfix/link:
+    delete:
+      consumes:
+      - application/json
+      description: Removes the CheckFix account link
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Unlink CheckFix account
+      tags:
+      - CheckFix
+    post:
+      consumes:
+      - application/json
+      description: Links the supplier's CheckFix account
+      parameters:
+      - description: Account to link
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.LinkAccountRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.CheckFixStatusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Link CheckFix account
+      tags:
+      - CheckFix
+  /supplier/checkfix/status:
+    get:
+      consumes:
+      - application/json
+      description: Gets the current CheckFix integration status for the supplier
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.CheckFixStatusResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get CheckFix status
+      tags:
+      - CheckFix
+  /supplier/checkfix/verify:
+    post:
+      consumes:
+      - application/json
+      description: Verifies a CheckFix report and stores the verification
+      parameters:
+      - description: Report to verify
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.VerifyReportRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.CheckFixVerificationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Verify a CheckFix report
+      tags:
+      - CheckFix
+  /supplier/companies:
+    get:
+      consumes:
+      - application/json
+      description: Lists all companies that have relationships with this supplier
+      parameters:
+      - description: Filter by status
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_handlers.CompanyRelationshipResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List companies
+      tags:
+      - Supplier Portal
+  /supplier/dashboard:
+    get:
+      consumes:
+      - application/json
+      description: Gets the supplier dashboard with overview statistics
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.SupplierDashboardResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get supplier dashboard
+      tags:
+      - Supplier Portal
+  /supplier/invitations:
+    get:
+      consumes:
+      - application/json
+      description: Lists all pending invitations for this supplier
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_handlers.CompanyRelationshipResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List pending invitations
+      tags:
+      - Supplier Portal
+  /supplier/invitations/{id}/accept:
+    post:
+      consumes:
+      - application/json
+      description: Accepts a company invitation
+      parameters:
+      - description: Relationship ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.CompanyRelationshipResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Accept invitation
+      tags:
+      - Supplier Portal
+  /supplier/invitations/{id}/decline:
+    post:
+      consumes:
+      - application/json
+      description: Declines a company invitation
+      parameters:
+      - description: Relationship ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Decline reason
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/internal_handlers.DeclineInvitationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.CompanyRelationshipResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Decline invitation
+      tags:
+      - Supplier Portal
+  /supplier/requirements:
+    get:
+      consumes:
+      - application/json
+      description: Lists all requirements assigned to this supplier
+      parameters:
+      - description: Filter by status
+        in: query
+        name: status
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.PaginatedSupplierRequirementsResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List requirements
+      tags:
+      - Supplier Portal
+  /supplier/requirements/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Gets details of a specific requirement
+      parameters:
+      - description: Requirement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.SupplierRequirementResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get requirement details
+      tags:
+      - Supplier Portal
+  /supplier/requirements/{id}/checkfix:
+    post:
+      consumes:
+      - application/json
+      description: Submits a CheckFix report verification as a response to a requirement
+      parameters:
+      - description: Requirement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: CheckFix report to submit
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.SubmitCheckFixRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.CheckFixSubmissionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Submit CheckFix verification for a requirement
+      tags:
+      - CheckFix
+  /supplier/requirements/{id}/start:
+    post:
+      consumes:
+      - application/json
+      description: Starts a response for a requirement
+      parameters:
+      - description: Requirement ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_handlers.SupplierResponseResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Start response
+      tags:
+      - Supplier Portal
+  /supplier/responses/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Gets details of a response
+      parameters:
+      - description: Response ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.SupplierResponseResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get response
+      tags:
+      - Supplier Portal
+  /supplier/responses/{id}/draft:
+    post:
+      consumes:
+      - application/json
+      description: Saves draft answers for a response
+      parameters:
+      - description: Response ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Draft answers
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.SaveDraftRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Save draft answers
+      tags:
+      - Supplier Portal
+  /supplier/responses/{id}/submit:
+    post:
+      consumes:
+      - application/json
+      description: Submits a questionnaire response
+      parameters:
+      - description: Response ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Answers to submit
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.SubmitResponseRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.SubmissionResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Submit response
+      tags:
+      - Supplier Portal
+  /suppliers:
+    get:
+      consumes:
+      - application/json
+      description: Lists all suppliers for the company
+      parameters:
+      - description: Filter by status
+        in: query
+        name: status
+        type: string
+      - description: Filter by classification
+        in: query
+        name: classification
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.PaginatedRelationshipsResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List suppliers
+      tags:
+      - Suppliers
+    post:
+      consumes:
+      - application/json
+      description: Sends an invitation to a supplier by email
+      parameters:
+      - description: Invite request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.InviteSupplierRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_handlers.RelationshipResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Invite a supplier
+      tags:
+      - Suppliers
+  /suppliers/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Gets details of a specific supplier relationship
+      parameters:
+      - description: Relationship ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.RelationshipResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get supplier details
+      tags:
+      - Suppliers
+    patch:
+      consumes:
+      - application/json
+      description: Updates details of a supplier relationship
+      parameters:
+      - description: Relationship ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Details update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.UpdateDetailsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.RelationshipResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update supplier details
+      tags:
+      - Suppliers
+  /suppliers/{id}/classification:
+    patch:
+      consumes:
+      - application/json
+      description: Updates the classification of a supplier
+      parameters:
+      - description: Relationship ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Classification update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.UpdateClassificationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.RelationshipResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update supplier classification
+      tags:
+      - Suppliers
+  /suppliers/{id}/reactivate:
+    post:
+      consumes:
+      - application/json
+      description: Reactivates a suspended supplier relationship
+      parameters:
+      - description: Relationship ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Reactivation reason
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/internal_handlers.StatusActionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.RelationshipResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Reactivate supplier
+      tags:
+      - Suppliers
+  /suppliers/{id}/suspend:
+    post:
+      consumes:
+      - application/json
+      description: Suspends an active supplier relationship
+      parameters:
+      - description: Relationship ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Suspension reason
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/internal_handlers.StatusActionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.RelationshipResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Suspend supplier
+      tags:
+      - Suppliers
+  /suppliers/{id}/terminate:
+    post:
+      consumes:
+      - application/json
+      description: Terminates a supplier relationship
+      parameters:
+      - description: Relationship ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Termination reason
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/internal_handlers.StatusActionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.RelationshipResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Terminate supplier
+      tags:
+      - Suppliers
+  /suppliers/stats:
+    get:
+      consumes:
+      - application/json
+      description: Gets supplier statistics for the company
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.SupplierStatsResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get supplier statistics
+      tags:
+      - Suppliers
+  /templates:
+    get:
+      consumes:
+      - application/json
+      description: Lists all available system questionnaire templates
+      parameters:
+      - description: Filter by category (ISO27001, GDPR, NIS2)
+        in: query
+        name: category
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_handlers.TemplateResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List system templates
+      tags:
+      - Templates
+  /templates/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Gets details of a specific template
+      parameters:
+      - description: Template ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.TemplateResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get template details
+      tags:
+      - Templates
+  /templates/organization:
+    get:
+      consumes:
+      - application/json
+      description: Lists custom templates created by the company
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.PaginatedTemplatesResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List organization templates
+      tags:
+      - Templates
+  /templates/search:
+    get:
+      consumes:
+      - application/json
+      description: Searches templates by name or description
+      parameters:
+      - description: Search query
+        in: query
+        name: q
+        required: true
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.PaginatedTemplatesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Search templates
+      tags:
+      - Templates
+securityDefinitions:
+  BearerAuth:
+    description: 'Enter your bearer token in the format: Bearer {token}'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
