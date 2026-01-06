@@ -412,7 +412,7 @@ func (h *RequirementHandler) UpdateRequirement(c *gin.Context) {
 	}
 
 	var req UpdateRequirementAPIRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if bindErr := c.ShouldBindJSON(&req); bindErr != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{
 			Error:   "invalid_request",
 			Message: "Invalid request body",
@@ -504,13 +504,11 @@ func (h *RequirementHandler) RegisterRoutes(rg *gin.RouterGroup, authMiddleware 
 	requirements := rg.Group("/requirements")
 	requirements.Use(authMiddleware)
 	requirements.Use(middleware.RequireCompany())
-	{
-		requirements.POST("", h.CreateRequirement)
-		requirements.GET("", h.ListRequirements)
-		requirements.GET("/stats", h.GetRequirementStats)
-		requirements.GET("/:id", h.GetRequirement)
-		requirements.PATCH("/:id", h.UpdateRequirement)
-	}
+	requirements.POST("", h.CreateRequirement)
+	requirements.GET("", h.ListRequirements)
+	requirements.GET("/stats", h.GetRequirementStats)
+	requirements.GET("/:id", h.GetRequirement)
+	requirements.PATCH("/:id", h.UpdateRequirement)
 }
 
 // toRequirementResponse converts a requirement model to response

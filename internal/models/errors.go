@@ -89,44 +89,51 @@ var (
 
 // IsNotFoundError returns true if the error is a not found error
 func IsNotFoundError(err error) bool {
-	switch err {
-	case ErrNotFound, ErrOrganizationNotFound, ErrUserNotFound, ErrSecureLinkNotFound,
-		ErrTemplateNotFound, ErrQuestionnaireNotFound, ErrQuestionNotFound,
-		ErrRelationshipNotFound, ErrRequirementNotFound, ErrResponseNotFound,
-		ErrSubmissionNotFound, ErrVerificationNotFound, ErrAuditLogNotFound:
-		return true
-	}
-	return false
+	return errors.Is(err, ErrNotFound) ||
+		errors.Is(err, ErrOrganizationNotFound) ||
+		errors.Is(err, ErrUserNotFound) ||
+		errors.Is(err, ErrSecureLinkNotFound) ||
+		errors.Is(err, ErrTemplateNotFound) ||
+		errors.Is(err, ErrQuestionnaireNotFound) ||
+		errors.Is(err, ErrQuestionNotFound) ||
+		errors.Is(err, ErrRelationshipNotFound) ||
+		errors.Is(err, ErrRequirementNotFound) ||
+		errors.Is(err, ErrResponseNotFound) ||
+		errors.Is(err, ErrSubmissionNotFound) ||
+		errors.Is(err, ErrVerificationNotFound) ||
+		errors.Is(err, ErrAuditLogNotFound)
 }
 
 // IsValidationError returns true if the error is a validation error
 func IsValidationError(err error) bool {
-	switch err {
-	case ErrInvalidInput, ErrInvalidStatusTransition, ErrInvalidOrganizationType,
-		ErrInvalidUserRole, ErrInvalidQuestionType, ErrMissingQuestionOptions,
-		ErrInvalidOptionID, ErrInvalidAnswerFormat:
-		return true
-	}
-	return false
+	return errors.Is(err, ErrInvalidInput) ||
+		errors.Is(err, ErrInvalidStatusTransition) ||
+		errors.Is(err, ErrInvalidOrganizationType) ||
+		errors.Is(err, ErrInvalidUserRole) ||
+		errors.Is(err, ErrInvalidQuestionType) ||
+		errors.Is(err, ErrMissingQuestionOptions) ||
+		errors.Is(err, ErrInvalidOptionID) ||
+		errors.Is(err, ErrInvalidAnswerFormat)
 }
 
 // IsAuthError returns true if the error is an authentication/authorization error
 func IsAuthError(err error) bool {
-	switch err {
-	case ErrUnauthorized, ErrForbidden, ErrUserInactive, ErrUserDeleted,
-		ErrSecureLinkExpired, ErrSecureLinkUsed, ErrSecureLinkInvalid:
-		return true
-	}
-	return false
+	return errors.Is(err, ErrUnauthorized) ||
+		errors.Is(err, ErrForbidden) ||
+		errors.Is(err, ErrUserInactive) ||
+		errors.Is(err, ErrUserDeleted) ||
+		errors.Is(err, ErrSecureLinkExpired) ||
+		errors.Is(err, ErrSecureLinkUsed) ||
+		errors.Is(err, ErrSecureLinkInvalid)
 }
 
 // IsConflictError returns true if the error is a conflict/duplicate error
 func IsConflictError(err error) bool {
-	switch err {
-	case ErrAlreadyExists, ErrSlugAlreadyExists, ErrDomainAlreadyExists,
-		ErrEmailAlreadyExists, ErrRelationshipExists, ErrResponseAlreadyExists,
-		ErrSubmissionAlreadyExists:
-		return true
-	}
-	return false
+	return errors.Is(err, ErrAlreadyExists) ||
+		errors.Is(err, ErrSlugAlreadyExists) ||
+		errors.Is(err, ErrDomainAlreadyExists) ||
+		errors.Is(err, ErrEmailAlreadyExists) ||
+		errors.Is(err, ErrRelationshipExists) ||
+		errors.Is(err, ErrResponseAlreadyExists) ||
+		errors.Is(err, ErrSubmissionAlreadyExists)
 }

@@ -333,7 +333,7 @@ func (h *RelationshipHandler) UpdateClassification(c *gin.Context) {
 	}
 
 	var req UpdateClassificationRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if bindErr := c.ShouldBindJSON(&req); bindErr != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{
 			Error:   "invalid_request",
 			Message: "Classification is required",
@@ -418,7 +418,7 @@ func (h *RelationshipHandler) UpdateDetails(c *gin.Context) {
 	}
 
 	var req UpdateDetailsRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if bindErr := c.ShouldBindJSON(&req); bindErr != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{
 			Error:   "invalid_request",
 			Message: "Invalid request body",
@@ -508,7 +508,8 @@ func (h *RelationshipHandler) SuspendSupplier(c *gin.Context) {
 	}
 
 	var req StatusActionRequest
-	_ = c.ShouldBindJSON(&req) // Optional body
+	//nolint:errcheck // Optional body - binding failure is acceptable
+	c.ShouldBindJSON(&req)
 
 	relationship, err := h.relationshipService.SuspendRelationship(c.Request.Context(), relationshipID, companyID, userID, req.Reason)
 	if err != nil {
@@ -581,7 +582,8 @@ func (h *RelationshipHandler) ReactivateSupplier(c *gin.Context) {
 	}
 
 	var req StatusActionRequest
-	_ = c.ShouldBindJSON(&req) // Optional body
+	//nolint:errcheck // Optional body - binding failure is acceptable
+	c.ShouldBindJSON(&req)
 
 	relationship, err := h.relationshipService.ReactivateRelationship(c.Request.Context(), relationshipID, companyID, userID, req.Reason)
 	if err != nil {
@@ -654,7 +656,8 @@ func (h *RelationshipHandler) TerminateSupplier(c *gin.Context) {
 	}
 
 	var req StatusActionRequest
-	_ = c.ShouldBindJSON(&req) // Optional body
+	//nolint:errcheck // Optional body - binding failure is acceptable
+	c.ShouldBindJSON(&req)
 
 	relationship, err := h.relationshipService.TerminateRelationship(c.Request.Context(), relationshipID, companyID, userID, req.Reason)
 	if err != nil {
@@ -730,17 +733,15 @@ func (h *RelationshipHandler) RegisterRoutes(rg *gin.RouterGroup, authMiddleware
 	suppliers := rg.Group("/suppliers")
 	suppliers.Use(authMiddleware)
 	suppliers.Use(middleware.RequireCompany())
-	{
-		suppliers.POST("", h.InviteSupplier)
-		suppliers.GET("", h.ListSuppliers)
-		suppliers.GET("/stats", h.GetSupplierStats)
-		suppliers.GET("/:id", h.GetSupplier)
-		suppliers.PATCH("/:id", h.UpdateDetails)
-		suppliers.PATCH("/:id/classification", h.UpdateClassification)
-		suppliers.POST("/:id/suspend", h.SuspendSupplier)
-		suppliers.POST("/:id/reactivate", h.ReactivateSupplier)
-		suppliers.POST("/:id/terminate", h.TerminateSupplier)
-	}
+	suppliers.POST("", h.InviteSupplier)
+	suppliers.GET("", h.ListSuppliers)
+	suppliers.GET("/stats", h.GetSupplierStats)
+	suppliers.GET("/:id", h.GetSupplier)
+	suppliers.PATCH("/:id", h.UpdateDetails)
+	suppliers.PATCH("/:id/classification", h.UpdateClassification)
+	suppliers.POST("/:id/suspend", h.SuspendSupplier)
+	suppliers.POST("/:id/reactivate", h.ReactivateSupplier)
+	suppliers.POST("/:id/terminate", h.TerminateSupplier)
 }
 
 // toRelationshipResponse converts a relationship model to response

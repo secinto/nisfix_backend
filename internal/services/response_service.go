@@ -150,8 +150,9 @@ func (s *responseService) StartResponse(ctx context.Context, requirementID, supp
 	}
 
 	// Update requirement status to in progress
-	if err := requirement.Start(supplierID); err == nil {
-		_ = s.requirementRepo.Update(ctx, requirement)
+	if startErr := requirement.Start(supplierID); startErr == nil {
+		//nolint:errcheck // Best-effort update
+		s.requirementRepo.Update(ctx, requirement)
 	}
 
 	return response, nil
@@ -381,8 +382,9 @@ func (s *responseService) SubmitQuestionnaireResponse(ctx context.Context, respo
 	}
 
 	// Update requirement status
-	if err := requirement.Submit(supplierID); err == nil {
-		_ = s.requirementRepo.Update(ctx, requirement)
+	if submitErr := requirement.Submit(supplierID); submitErr == nil {
+		//nolint:errcheck // Best-effort update
+		s.requirementRepo.Update(ctx, requirement)
 	}
 
 	return &SubmissionResult{

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -36,7 +37,7 @@ func (r *MongoQuestionnaireTemplateRepository) GetByID(ctx context.Context, id p
 	var template models.QuestionnaireTemplate
 	filter := bson.M{"_id": id}
 	err := r.collection.FindOne(ctx, filter).Decode(&template)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, models.ErrTemplateNotFound
 	}
 	if err != nil {
@@ -102,7 +103,7 @@ func (r *MongoQuestionnaireTemplateRepository) ListSystemTemplates(ctx context.C
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var templates []models.QuestionnaireTemplate
 	if err := cursor.All(ctx, &templates); err != nil {
@@ -133,7 +134,7 @@ func (r *MongoQuestionnaireTemplateRepository) ListByOrganization(ctx context.Co
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var templates []models.QuestionnaireTemplate
 	if err := cursor.All(ctx, &templates); err != nil {
@@ -178,7 +179,7 @@ func (r *MongoQuestionnaireTemplateRepository) SearchTemplates(ctx context.Conte
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var templates []models.QuestionnaireTemplate
 	if err := cursor.All(ctx, &templates); err != nil {
@@ -227,7 +228,7 @@ func (r *MongoQuestionnaireRepository) GetByID(ctx context.Context, id primitive
 	var questionnaire models.Questionnaire
 	filter := bson.M{"_id": id}
 	err := r.collection.FindOne(ctx, filter).Decode(&questionnaire)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, models.ErrQuestionnaireNotFound
 	}
 	if err != nil {
@@ -311,7 +312,7 @@ func (r *MongoQuestionnaireRepository) ListByCompany(ctx context.Context, compan
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var questionnaires []models.Questionnaire
 	if err := cursor.All(ctx, &questionnaires); err != nil {

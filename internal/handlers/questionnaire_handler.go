@@ -685,7 +685,7 @@ func (h *QuestionnaireHandler) AddQuestion(c *gin.Context) {
 	}
 
 	var req CreateQuestionAPIRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if bindErr := c.ShouldBindJSON(&req); bindErr != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{
 			Error:   "invalid_request",
 			Message: "Text and type are required",
@@ -795,7 +795,7 @@ func (h *QuestionnaireHandler) UpdateQuestion(c *gin.Context) {
 	}
 
 	var req UpdateQuestionAPIRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if bindErr := c.ShouldBindJSON(&req); bindErr != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{
 			Error:   "invalid_request",
 			Message: "Invalid request body",
@@ -954,7 +954,7 @@ func (h *QuestionnaireHandler) ReorderQuestions(c *gin.Context) {
 	}
 
 	var req ReorderQuestionsRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if bindErr := c.ShouldBindJSON(&req); bindErr != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{
 			Error:   "invalid_request",
 			Message: "Orders map is required",
@@ -1033,27 +1033,23 @@ func (h *QuestionnaireHandler) RegisterRoutes(rg *gin.RouterGroup, authMiddlewar
 	questionnaires := rg.Group("/questionnaires")
 	questionnaires.Use(authMiddleware)
 	questionnaires.Use(middleware.RequireCompany())
-	{
-		questionnaires.POST("", h.CreateQuestionnaire)
-		questionnaires.GET("", h.ListQuestionnaires)
-		questionnaires.GET("/stats", h.GetQuestionnaireStats)
-		questionnaires.GET("/:id", h.GetQuestionnaire)
-		questionnaires.PATCH("/:id", h.UpdateQuestionnaire)
-		questionnaires.DELETE("/:id", h.DeleteQuestionnaire)
-		questionnaires.POST("/:id/publish", h.PublishQuestionnaire)
-		questionnaires.POST("/:id/archive", h.ArchiveQuestionnaire)
-		questionnaires.POST("/:id/questions", h.AddQuestion)
-		questionnaires.POST("/:id/questions/reorder", h.ReorderQuestions)
-	}
+	questionnaires.POST("", h.CreateQuestionnaire)
+	questionnaires.GET("", h.ListQuestionnaires)
+	questionnaires.GET("/stats", h.GetQuestionnaireStats)
+	questionnaires.GET("/:id", h.GetQuestionnaire)
+	questionnaires.PATCH("/:id", h.UpdateQuestionnaire)
+	questionnaires.DELETE("/:id", h.DeleteQuestionnaire)
+	questionnaires.POST("/:id/publish", h.PublishQuestionnaire)
+	questionnaires.POST("/:id/archive", h.ArchiveQuestionnaire)
+	questionnaires.POST("/:id/questions", h.AddQuestion)
+	questionnaires.POST("/:id/questions/reorder", h.ReorderQuestions)
 
 	// Question routes (not nested under questionnaires for simpler URLs)
 	questions := rg.Group("/questions")
 	questions.Use(authMiddleware)
 	questions.Use(middleware.RequireCompany())
-	{
-		questions.PATCH("/:id", h.UpdateQuestion)
-		questions.DELETE("/:id", h.DeleteQuestion)
-	}
+	questions.PATCH("/:id", h.UpdateQuestion)
+	questions.DELETE("/:id", h.DeleteQuestion)
 }
 
 // toQuestionnaireResponse converts a questionnaire model to response

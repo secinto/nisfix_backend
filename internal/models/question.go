@@ -147,6 +147,8 @@ func (q *Question) calculateMaxPoints() int {
 				maxPoints += opt.Points
 			}
 		}
+	case QuestionTypeText:
+		// Text questions use default maxPoints of 0 (will be set to 1 below)
 	}
 	if maxPoints == 0 {
 		maxPoints = 1
@@ -249,6 +251,8 @@ func (q *Question) CalculateScore(selectedOptionIDs []string) int {
 				totalScore += opt.Points
 			}
 		}
+	case QuestionTypeText:
+		// Text questions have no options to score
 	}
 
 	return totalScore

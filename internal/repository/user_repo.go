@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -43,7 +44,7 @@ func (r *MongoUserRepository) GetByID(ctx context.Context, id primitive.ObjectID
 		"deleted_at": nil,
 	}
 	err := r.collection.FindOne(ctx, filter).Decode(&user)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, models.ErrUserNotFound
 	}
 	if err != nil {
@@ -60,7 +61,7 @@ func (r *MongoUserRepository) GetByEmail(ctx context.Context, email string) (*mo
 		"deleted_at": nil,
 	}
 	err := r.collection.FindOne(ctx, filter).Decode(&user)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, models.ErrUserNotFound
 	}
 	if err != nil {
@@ -164,7 +165,7 @@ func (r *MongoUserRepository) ListByOrganization(ctx context.Context, orgID prim
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var users []models.User
 	if err := cursor.All(ctx, &users); err != nil {

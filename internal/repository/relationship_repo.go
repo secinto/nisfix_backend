@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -39,7 +40,7 @@ func (r *MongoRelationshipRepository) GetByID(ctx context.Context, id primitive.
 	var relationship models.CompanySupplierRelationship
 	filter := bson.M{"_id": id}
 	err := r.collection.FindOne(ctx, filter).Decode(&relationship)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, models.ErrRelationshipNotFound
 	}
 	if err != nil {
@@ -56,7 +57,7 @@ func (r *MongoRelationshipRepository) GetByCompanyAndSupplier(ctx context.Contex
 		"supplier_id": supplierID,
 	}
 	err := r.collection.FindOne(ctx, filter).Decode(&relationship)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, models.ErrRelationshipNotFound
 	}
 	if err != nil {
@@ -74,7 +75,7 @@ func (r *MongoRelationshipRepository) GetByInvitedEmail(ctx context.Context, ema
 		"status":        models.RelationshipStatusPending,
 	}
 	err := r.collection.FindOne(ctx, filter).Decode(&relationship)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, models.ErrRelationshipNotFound
 	}
 	if err != nil {
@@ -126,7 +127,7 @@ func (r *MongoRelationshipRepository) ListByCompany(ctx context.Context, company
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var relationships []models.CompanySupplierRelationship
 	if err := cursor.All(ctx, &relationships); err != nil {
@@ -171,7 +172,7 @@ func (r *MongoRelationshipRepository) ListBySupplier(ctx context.Context, suppli
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var relationships []models.CompanySupplierRelationship
 	if err := cursor.All(ctx, &relationships); err != nil {
@@ -205,7 +206,7 @@ func (r *MongoRelationshipRepository) ListPendingByEmail(ctx context.Context, em
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var relationships []models.CompanySupplierRelationship
 	if err := cursor.All(ctx, &relationships); err != nil {

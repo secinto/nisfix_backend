@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -40,7 +41,7 @@ func (r *MongoResponseRepository) GetByID(ctx context.Context, id primitive.Obje
 	var response models.SupplierResponse
 	filter := bson.M{"_id": id}
 	err := r.collection.FindOne(ctx, filter).Decode(&response)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, models.ErrResponseNotFound
 	}
 	if err != nil {
@@ -54,7 +55,7 @@ func (r *MongoResponseRepository) GetByRequirement(ctx context.Context, requirem
 	var response models.SupplierResponse
 	filter := bson.M{"requirement_id": requirementID}
 	err := r.collection.FindOne(ctx, filter).Decode(&response)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, models.ErrResponseNotFound
 	}
 	if err != nil {
@@ -139,7 +140,7 @@ func (r *MongoResponseRepository) ListBySupplier(ctx context.Context, supplierID
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var responses []models.SupplierResponse
 	if err := cursor.All(ctx, &responses); err != nil {
@@ -197,7 +198,7 @@ func (r *MongoSubmissionRepository) GetByID(ctx context.Context, id primitive.Ob
 	var submission models.QuestionnaireSubmission
 	filter := bson.M{"_id": id}
 	err := r.collection.FindOne(ctx, filter).Decode(&submission)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, models.ErrSubmissionNotFound
 	}
 	if err != nil {
@@ -211,7 +212,7 @@ func (r *MongoSubmissionRepository) GetByResponse(ctx context.Context, responseI
 	var submission models.QuestionnaireSubmission
 	filter := bson.M{"response_id": responseID}
 	err := r.collection.FindOne(ctx, filter).Decode(&submission)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, models.ErrSubmissionNotFound
 	}
 	if err != nil {
@@ -241,7 +242,7 @@ func (r *MongoSubmissionRepository) ListByQuestionnaire(ctx context.Context, que
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var submissions []models.QuestionnaireSubmission
 	if err := cursor.All(ctx, &submissions); err != nil {
@@ -284,7 +285,7 @@ func (r *MongoSubmissionRepository) GetPassRateByQuestionnaire(ctx context.Conte
 	if err != nil {
 		return 0, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var result struct {
 		Total  int `bson:"total"`
@@ -334,7 +335,7 @@ func (r *MongoVerificationRepository) GetByID(ctx context.Context, id primitive.
 	var verification models.CheckFixVerification
 	filter := bson.M{"_id": id}
 	err := r.collection.FindOne(ctx, filter).Decode(&verification)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, models.ErrVerificationNotFound
 	}
 	if err != nil {
@@ -348,7 +349,7 @@ func (r *MongoVerificationRepository) GetByResponse(ctx context.Context, respons
 	var verification models.CheckFixVerification
 	filter := bson.M{"response_id": responseID}
 	err := r.collection.FindOne(ctx, filter).Decode(&verification)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, models.ErrVerificationNotFound
 	}
 	if err != nil {
@@ -363,7 +364,7 @@ func (r *MongoVerificationRepository) GetLatestBySupplier(ctx context.Context, s
 	filter := bson.M{"supplier_id": supplierID}
 	findOpts := options.FindOne().SetSort(bson.D{{Key: "verified_at", Value: -1}})
 	err := r.collection.FindOne(ctx, filter, findOpts).Decode(&verification)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, models.ErrVerificationNotFound
 	}
 	if err != nil {
@@ -402,7 +403,7 @@ func (r *MongoVerificationRepository) ListExpiringVerifications(ctx context.Cont
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var verifications []models.CheckFixVerification
 	if err := cursor.All(ctx, &verifications); err != nil {

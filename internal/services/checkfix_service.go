@@ -326,8 +326,8 @@ func (s *checkFixService) SubmitCheckFixResponse(ctx context.Context, requiremen
 			SupplierID:    supplierID,
 		}
 		response.BeforeCreate()
-		if err := s.responseRepo.Create(ctx, response); err != nil {
-			return nil, fmt.Errorf("failed to create response: %w", err)
+		if createErr := s.responseRepo.Create(ctx, response); createErr != nil {
+			return nil, fmt.Errorf("failed to create response: %w", createErr)
 		}
 	}
 
@@ -360,8 +360,9 @@ func (s *checkFixService) SubmitCheckFixResponse(ctx context.Context, requiremen
 	}
 
 	// Update requirement status
-	if err := requirement.Submit(supplierID); err == nil {
-		_ = s.requirementRepo.Update(ctx, requirement)
+	if submitErr := requirement.Submit(supplierID); submitErr == nil {
+		//nolint:errcheck // Best-effort update
+		s.requirementRepo.Update(ctx, requirement)
 	}
 
 	// Build message
@@ -419,13 +420,13 @@ func (c *HTTPCheckFixAPIClient) VerifyReport(ctx context.Context, reportHash str
 	if err != nil {
 		return nil, ErrCheckFixAPIError
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck // defer close
 
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, ErrCheckFixReportNotFound
 	}
 	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
+		body, _ := io.ReadAll(resp.Body) //nolint:errcheck // Best-effort read for error message
 		return nil, fmt.Errorf("%w: %s", ErrCheckFixAPIError, string(body))
 	}
 
@@ -452,7 +453,7 @@ func (c *HTTPCheckFixAPIClient) GetAccountDomain(ctx context.Context, accountID 
 	if err != nil {
 		return "", ErrCheckFixAPIError
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck // defer close
 
 	if resp.StatusCode != http.StatusOK {
 		return "", ErrCheckFixAPIError
@@ -483,7 +484,7 @@ func (c *HTTPCheckFixAPIClient) ValidateAccountAccess(ctx context.Context, accou
 	if err != nil {
 		return false, nil // Treat network errors as invalid
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck // defer close
 
 	return resp.StatusCode == http.StatusOK, nil
 }

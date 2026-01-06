@@ -231,7 +231,8 @@ func (s *questionnaireService) CreateFromTemplate(ctx context.Context, companyID
 	}
 
 	// Increment template usage count
-	_ = s.templateRepo.IncrementUsageCount(ctx, templateID)
+	//nolint:errcheck // Best-effort tracking
+	s.templateRepo.IncrementUsageCount(ctx, templateID)
 
 	return questionnaire, nil
 }
@@ -632,5 +633,6 @@ func (s *questionnaireService) updateQuestionnaireStats(ctx context.Context, que
 		return
 	}
 
-	_ = s.questionnaireRepo.UpdateStatistics(ctx, questionnaireID, int(count), maxScore)
+	//nolint:errcheck // Best-effort statistics update
+	s.questionnaireRepo.UpdateStatistics(ctx, questionnaireID, int(count), maxScore)
 }

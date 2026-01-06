@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"testing"
 	"time"
 
@@ -214,7 +215,7 @@ func TestRequirement_TransitionStatus(t *testing.T) {
 
 	// Invalid transition: InProgress -> Approved
 	err = req.TransitionStatus(RequirementStatusApproved, userID, "Trying to approve")
-	if err != ErrInvalidStatusTransition {
+	if !errors.Is(err, ErrInvalidStatusTransition) {
 		t.Errorf("TransitionStatus() expected ErrInvalidStatusTransition, got %v", err)
 	}
 }

@@ -3,6 +3,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -62,7 +63,7 @@ func (r *MongoAuditRepository) GetByID(ctx context.Context, id primitive.ObjectI
 	var log models.AuditLog
 	err := r.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&log)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, models.ErrAuditLogNotFound
 		}
 		return nil, err
@@ -135,7 +136,7 @@ func (r *MongoAuditRepository) listWithPagination(ctx context.Context, filter bs
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var logs []models.AuditLog
 	if err := cursor.All(ctx, &logs); err != nil {

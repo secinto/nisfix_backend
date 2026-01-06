@@ -136,30 +136,31 @@ func (h *SupplierPortalHandler) GetSupplierDashboard(c *gin.Context) {
 
 	ctx := c.Request.Context()
 
+	// Dashboard stats are best-effort - errors default to 0 count
 	// Count total companies (active relationships)
 	activeStatus := models.RelationshipStatusActive
-	totalCompanies, _ := h.relationshipRepo.CountBySupplier(ctx, supplierID, &activeStatus)
+	totalCompanies, _ := h.relationshipRepo.CountBySupplier(ctx, supplierID, &activeStatus) //nolint:errcheck // best-effort
 
 	// Count pending invitations
 	pendingStatus := models.RelationshipStatusPending
-	pendingInvitations, _ := h.relationshipRepo.CountBySupplier(ctx, supplierID, &pendingStatus)
+	pendingInvitations, _ := h.relationshipRepo.CountBySupplier(ctx, supplierID, &pendingStatus) //nolint:errcheck // best-effort
 
 	// Count pending requirements
 	pendingReqStatus := models.RequirementStatusPending
-	pendingRequirements, _ := h.requirementRepo.CountBySupplier(ctx, supplierID, &pendingReqStatus)
+	pendingRequirements, _ := h.requirementRepo.CountBySupplier(ctx, supplierID, &pendingReqStatus) //nolint:errcheck // best-effort
 
 	// Count in progress requirements
 	inProgressStatus := models.RequirementStatusInProgress
-	inProgress, _ := h.requirementRepo.CountBySupplier(ctx, supplierID, &inProgressStatus)
+	inProgress, _ := h.requirementRepo.CountBySupplier(ctx, supplierID, &inProgressStatus) //nolint:errcheck // best-effort
 	pendingRequirements += inProgress
 
 	// Count submitted requirements
 	submittedStatus := models.RequirementStatusSubmitted
-	submitted, _ := h.requirementRepo.CountBySupplier(ctx, supplierID, &submittedStatus)
+	submitted, _ := h.requirementRepo.CountBySupplier(ctx, supplierID, &submittedStatus) //nolint:errcheck // best-effort
 
 	// Get recent requirements
 	opts := repository.PaginationOptions{Page: 1, Limit: 5, SortBy: "created_at", SortDir: -1}
-	result, _ := h.requirementRepo.ListBySupplier(ctx, supplierID, nil, opts)
+	result, _ := h.requirementRepo.ListBySupplier(ctx, supplierID, nil, opts) //nolint:errcheck // best-effort
 
 	recentReqs := make([]SupplierRequirementResponse, len(result.Items))
 	for i, r := range result.Items {
@@ -407,7 +408,8 @@ func (h *SupplierPortalHandler) DeclineInvitation(c *gin.Context) {
 	}
 
 	var req DeclineInvitationRequest
-	_ = c.ShouldBindJSON(&req)
+	//nolint:errcheck // Optional body - decline reason is optional
+	c.ShouldBindJSON(&req)
 
 	// Get relationship
 	relationship, err := h.relationshipRepo.GetByID(c.Request.Context(), relationshipID)
@@ -830,7 +832,7 @@ func (h *SupplierPortalHandler) SubmitResponse(c *gin.Context) {
 	}
 
 	var req SubmitResponseRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if bindErr := c.ShouldBindJSON(&req); bindErr != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{
 			Error:   "invalid_request",
 			Message: "Answers are required",
@@ -896,28 +898,27 @@ func (h *SupplierPortalHandler) RegisterRoutes(rg *gin.RouterGroup, authMiddlewa
 	supplier := rg.Group("/supplier")
 	supplier.Use(authMiddleware)
 	supplier.Use(middleware.RequireSupplier())
-	{
-		// Dashboard
-		supplier.GET("/dashboard", h.GetSupplierDashboard)
 
-		// Companies
-		supplier.GET("/companies", h.ListCompanies)
+	// Dashboard
+	supplier.GET("/dashboard", h.GetSupplierDashboard)
 
-		// Invitations
-		supplier.GET("/invitations", h.ListPendingInvitations)
-		supplier.POST("/invitations/:id/accept", h.AcceptInvitation)
-		supplier.POST("/invitations/:id/decline", h.DeclineInvitation)
+	// Companies
+	supplier.GET("/companies", h.ListCompanies)
 
-		// Requirements
-		supplier.GET("/requirements", h.ListRequirements)
-		supplier.GET("/requirements/:id", h.GetRequirement)
-		supplier.POST("/requirements/:id/start", h.StartResponse)
+	// Invitations
+	supplier.GET("/invitations", h.ListPendingInvitations)
+	supplier.POST("/invitations/:id/accept", h.AcceptInvitation)
+	supplier.POST("/invitations/:id/decline", h.DeclineInvitation)
 
-		// Responses
-		supplier.GET("/responses/:id", h.GetResponse)
-		supplier.POST("/responses/:id/draft", h.SaveDraft)
-		supplier.POST("/responses/:id/submit", h.SubmitResponse)
-	}
+	// Requirements
+	supplier.GET("/requirements", h.ListRequirements)
+	supplier.GET("/requirements/:id", h.GetRequirement)
+	supplier.POST("/requirements/:id/start", h.StartResponse)
+
+	// Responses
+	supplier.GET("/responses/:id", h.GetResponse)
+	supplier.POST("/responses/:id/draft", h.SaveDraft)
+	supplier.POST("/responses/:id/submit", h.SubmitResponse)
 }
 
 // toSupplierRequirementResponse converts a requirement to supplier response format

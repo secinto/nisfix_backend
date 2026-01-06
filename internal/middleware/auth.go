@@ -47,7 +47,7 @@ func AuthMiddleware(jwtService auth.JWTService) gin.HandlerFunc {
 		}
 
 		parts := strings.SplitN(authHeader, " ", 2)
-		if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
+		if len(parts) != 2 || !strings.EqualFold(parts[0], "bearer") {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"error":   "unauthorized",
 				"message": ErrAuthHeaderFormat.Error(),
@@ -96,7 +96,7 @@ func OptionalAuthMiddleware(jwtService auth.JWTService) gin.HandlerFunc {
 		}
 
 		parts := strings.SplitN(authHeader, " ", 2)
-		if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
+		if len(parts) != 2 || !strings.EqualFold(parts[0], "bearer") {
 			c.Next()
 			return
 		}
@@ -129,7 +129,16 @@ func RequireRole(allowedRoles ...models.UserRole) gin.HandlerFunc {
 			return
 		}
 
-		userRole := models.UserRole(strings.ToUpper(roleVal.(string)))
+		roleStr, ok := roleVal.(string)
+		if !ok {
+			c.JSON(http.StatusForbidden, gin.H{
+				"error":   "forbidden",
+				"message": ErrForbidden.Error(),
+			})
+			c.Abort()
+			return
+		}
+		userRole := models.UserRole(strings.ToUpper(roleStr))
 		for _, allowed := range allowedRoles {
 			if userRole == allowed {
 				c.Next()
@@ -159,7 +168,16 @@ func RequireOrgType(allowedTypes ...models.OrganizationType) gin.HandlerFunc {
 			return
 		}
 
-		orgType := models.OrganizationType(strings.ToUpper(orgTypeVal.(string)))
+		orgTypeStr, ok := orgTypeVal.(string)
+		if !ok {
+			c.JSON(http.StatusForbidden, gin.H{
+				"error":   "forbidden",
+				"message": ErrForbidden.Error(),
+			})
+			c.Abort()
+			return
+		}
+		orgType := models.OrganizationType(strings.ToUpper(orgTypeStr))
 		for _, allowed := range allowedTypes {
 			if orgType == allowed {
 				c.Next()
@@ -194,12 +212,17 @@ func RequireSupplier() gin.HandlerFunc {
 
 // GetUserID extracts the user ID from context
 func GetUserID(c *gin.Context) (primitive.ObjectID, bool) {
-	userIDStr, exists := c.Get(ContextKeyUserID)
+	userIDVal, exists := c.Get(ContextKeyUserID)
 	if !exists {
 		return primitive.NilObjectID, false
 	}
 
-	userID, err := primitive.ObjectIDFromHex(userIDStr.(string))
+	userIDStr, ok := userIDVal.(string)
+	if !ok {
+		return primitive.NilObjectID, false
+	}
+
+	userID, err := primitive.ObjectIDFromHex(userIDStr)
 	if err != nil {
 		return primitive.NilObjectID, false
 	}
@@ -209,12 +232,17 @@ func GetUserID(c *gin.Context) (primitive.ObjectID, bool) {
 
 // GetOrgID extracts the organization ID from context
 func GetOrgID(c *gin.Context) (primitive.ObjectID, bool) {
-	orgIDStr, exists := c.Get(ContextKeyOrgID)
+	orgIDVal, exists := c.Get(ContextKeyOrgID)
 	if !exists {
 		return primitive.NilObjectID, false
 	}
 
-	orgID, err := primitive.ObjectIDFromHex(orgIDStr.(string))
+	orgIDStr, ok := orgIDVal.(string)
+	if !ok {
+		return primitive.NilObjectID, false
+	}
+
+	orgID, err := primitive.ObjectIDFromHex(orgIDStr)
 	if err != nil {
 		return primitive.NilObjectID, false
 	}
@@ -224,32 +252,47 @@ func GetOrgID(c *gin.Context) (primitive.ObjectID, bool) {
 
 // GetRole extracts the user role from context
 func GetRole(c *gin.Context) (models.UserRole, bool) {
-	roleStr, exists := c.Get(ContextKeyRole)
+	roleVal, exists := c.Get(ContextKeyRole)
 	if !exists {
 		return "", false
 	}
 
-	return models.UserRole(strings.ToUpper(roleStr.(string))), true
+	roleStr, ok := roleVal.(string)
+	if !ok {
+		return "", false
+	}
+
+	return models.UserRole(strings.ToUpper(roleStr)), true
 }
 
 // GetOrgType extracts the organization type from context
 func GetOrgType(c *gin.Context) (models.OrganizationType, bool) {
-	orgTypeStr, exists := c.Get(ContextKeyOrgType)
+	orgTypeVal, exists := c.Get(ContextKeyOrgType)
 	if !exists {
 		return "", false
 	}
 
-	return models.OrganizationType(strings.ToUpper(orgTypeStr.(string))), true
+	orgTypeStr, ok := orgTypeVal.(string)
+	if !ok {
+		return "", false
+	}
+
+	return models.OrganizationType(strings.ToUpper(orgTypeStr)), true
 }
 
 // GetClaims extracts the full JWT claims from context
 func GetClaims(c *gin.Context) (*auth.Claims, bool) {
-	claims, exists := c.Get(ContextKeyClaims)
+	claimsVal, exists := c.Get(ContextKeyClaims)
 	if !exists {
 		return nil, false
 	}
 
-	return claims.(*auth.Claims), true
+	claims, ok := claimsVal.(*auth.Claims)
+	if !ok {
+		return nil, false
+	}
+
+	return claims, true
 }
 
 // IsAdmin checks if the current user is an admin

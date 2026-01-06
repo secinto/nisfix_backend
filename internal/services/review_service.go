@@ -85,10 +85,11 @@ func (s *reviewService) ApproveRequirement(ctx context.Context, requirementID, c
 	}
 
 	// Get response and mark as reviewed
-	response, err := s.responseRepo.GetByRequirement(ctx, requirementID)
-	if err == nil && response != nil {
+	response, getErr := s.responseRepo.GetByRequirement(ctx, requirementID)
+	if getErr == nil && response != nil {
 		response.MarkReviewed(userID, notes)
-		_ = s.responseRepo.Update(ctx, response)
+		//nolint:errcheck // Best-effort update
+		s.responseRepo.Update(ctx, response)
 	}
 
 	// Approve
@@ -127,10 +128,11 @@ func (s *reviewService) RejectRequirement(ctx context.Context, requirementID, co
 	}
 
 	// Get response and mark as reviewed
-	response, err := s.responseRepo.GetByRequirement(ctx, requirementID)
-	if err == nil && response != nil {
+	response, getErr := s.responseRepo.GetByRequirement(ctx, requirementID)
+	if getErr == nil && response != nil {
 		response.MarkReviewed(userID, reason)
-		_ = s.responseRepo.Update(ctx, response)
+		//nolint:errcheck // Best-effort update
+		s.responseRepo.Update(ctx, response)
 	}
 
 	// Reject

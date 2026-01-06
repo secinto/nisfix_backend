@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -37,7 +38,7 @@ func (r *MongoRequirementRepository) GetByID(ctx context.Context, id primitive.O
 	var requirement models.Requirement
 	filter := bson.M{"_id": id}
 	err := r.collection.FindOne(ctx, filter).Decode(&requirement)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, models.ErrRequirementNotFound
 	}
 	if err != nil {
@@ -85,7 +86,7 @@ func (r *MongoRequirementRepository) ListByCompany(ctx context.Context, companyI
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var requirements []models.Requirement
 	if err := cursor.All(ctx, &requirements); err != nil {
@@ -130,7 +131,7 @@ func (r *MongoRequirementRepository) ListBySupplier(ctx context.Context, supplie
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var requirements []models.Requirement
 	if err := cursor.All(ctx, &requirements); err != nil {
@@ -164,7 +165,7 @@ func (r *MongoRequirementRepository) ListByRelationship(ctx context.Context, rel
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var requirements []models.Requirement
 	if err := cursor.All(ctx, &requirements); err != nil {
@@ -198,7 +199,7 @@ func (r *MongoRequirementRepository) ListOverdue(ctx context.Context, companyID 
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var requirements []models.Requirement
 	if err := cursor.All(ctx, &requirements); err != nil {
@@ -229,7 +230,7 @@ func (r *MongoRequirementRepository) ListNeedingReminder(ctx context.Context, re
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var requirements []models.Requirement
 	if err := cursor.All(ctx, &requirements); err != nil {

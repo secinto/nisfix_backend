@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -43,7 +44,7 @@ func (r *MongoOrganizationRepository) GetByID(ctx context.Context, id primitive.
 		"deleted_at": nil,
 	}
 	err := r.collection.FindOne(ctx, filter).Decode(&org)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, models.ErrOrganizationNotFound
 	}
 	if err != nil {
@@ -60,7 +61,7 @@ func (r *MongoOrganizationRepository) GetBySlug(ctx context.Context, slug string
 		"deleted_at": nil,
 	}
 	err := r.collection.FindOne(ctx, filter).Decode(&org)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, models.ErrOrganizationNotFound
 	}
 	if err != nil {
@@ -77,7 +78,7 @@ func (r *MongoOrganizationRepository) GetByDomain(ctx context.Context, domain st
 		"deleted_at": nil,
 	}
 	err := r.collection.FindOne(ctx, filter).Decode(&org)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, models.ErrOrganizationNotFound
 	}
 	if err != nil {
@@ -154,7 +155,7 @@ func (r *MongoOrganizationRepository) List(ctx context.Context, orgType *models.
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var orgs []models.Organization
 	if err := cursor.All(ctx, &orgs); err != nil {

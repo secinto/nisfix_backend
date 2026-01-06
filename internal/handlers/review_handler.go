@@ -246,7 +246,8 @@ func (h *ReviewHandler) ApproveRequirement(c *gin.Context) {
 	}
 
 	var req ReviewActionRequest
-	_ = c.ShouldBindJSON(&req)
+	//nolint:errcheck // Optional body - approval notes are optional
+	c.ShouldBindJSON(&req)
 
 	requirement, err := h.reviewService.ApproveRequirement(c.Request.Context(), requirementID, companyID, userID, req.Notes)
 	if err != nil {
@@ -319,7 +320,7 @@ func (h *ReviewHandler) RejectRequirement(c *gin.Context) {
 	}
 
 	var req ReviewActionRequest
-	if err := c.ShouldBindJSON(&req); err != nil || req.Reason == "" {
+	if bindErr := c.ShouldBindJSON(&req); bindErr != nil || req.Reason == "" {
 		c.JSON(http.StatusBadRequest, ErrorResponse{
 			Error:   "invalid_request",
 			Message: "Rejection reason is required",
@@ -398,7 +399,7 @@ func (h *ReviewHandler) RequestRevision(c *gin.Context) {
 	}
 
 	var req ReviewActionRequest
-	if err := c.ShouldBindJSON(&req); err != nil || req.Reason == "" {
+	if bindErr := c.ShouldBindJSON(&req); bindErr != nil || req.Reason == "" {
 		c.JSON(http.StatusBadRequest, ErrorResponse{
 			Error:   "invalid_request",
 			Message: "Revision reason is required",
@@ -440,10 +441,8 @@ func (h *ReviewHandler) RegisterRoutes(rg *gin.RouterGroup, authMiddleware gin.H
 	requirements := rg.Group("/requirements")
 	requirements.Use(authMiddleware)
 	requirements.Use(middleware.RequireCompany())
-	{
-		requirements.GET("/:id/review", h.GetSubmissionForReview)
-		requirements.POST("/:id/approve", h.ApproveRequirement)
-		requirements.POST("/:id/reject", h.RejectRequirement)
-		requirements.POST("/:id/request-revision", h.RequestRevision)
-	}
+	requirements.GET("/:id/review", h.GetSubmissionForReview)
+	requirements.POST("/:id/approve", h.ApproveRequirement)
+	requirements.POST("/:id/reject", h.RejectRequirement)
+	requirements.POST("/:id/request-revision", h.RequestRevision)
 }

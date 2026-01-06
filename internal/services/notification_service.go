@@ -84,7 +84,7 @@ func (s *notificationService) sendEmail(ctx context.Context, req EmailRequest) e
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck // defer close
 
 	if resp.StatusCode >= 400 {
 		return fmt.Errorf("mail service returned status %d", resp.StatusCode)

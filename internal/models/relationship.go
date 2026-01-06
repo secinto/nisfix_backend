@@ -230,6 +230,8 @@ func (r *CompanySupplierRelationship) TransitionStatus(newStatus RelationshipSta
 		r.AcceptedAt = &now
 	case RelationshipStatusRejected:
 		r.RejectedAt = &now
+	case RelationshipStatusPending, RelationshipStatusSuspended, RelationshipStatusTerminated:
+		// No additional timestamp updates needed for these statuses
 	}
 
 	return nil

@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// Context key for request ID
+// ContextKeyRequestID is the context key for request ID
 const ContextKeyRequestID = "request_id"
 
 // RequestID adds a unique request ID to each request
@@ -28,8 +28,10 @@ func RequestID() gin.HandlerFunc {
 
 // GetRequestID extracts the request ID from context
 func GetRequestID(c *gin.Context) string {
-	if requestID, exists := c.Get(ContextKeyRequestID); exists {
-		return requestID.(string)
+	if requestIDVal, exists := c.Get(ContextKeyRequestID); exists {
+		if requestID, ok := requestIDVal.(string); ok {
+			return requestID
+		}
 	}
 	return ""
 }
@@ -95,6 +97,7 @@ func Logger() gin.HandlerFunc {
 		}
 
 		// Log entry using Gin's default logger format with additions
+		//nolint:errcheck // Logging errors should not crash the request
 		gin.DefaultWriter.Write([]byte(
 			time.Now().Format("2006/01/02 - 15:04:05") + " | " +
 				requestID[:8] + " | " +

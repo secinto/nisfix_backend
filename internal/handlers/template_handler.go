@@ -256,12 +256,10 @@ func (h *TemplateHandler) ListOrganizationTemplates(c *gin.Context) {
 func (h *TemplateHandler) RegisterRoutes(rg *gin.RouterGroup, authMiddleware gin.HandlerFunc) {
 	templates := rg.Group("/templates")
 	templates.Use(authMiddleware)
-	{
-		templates.GET("", h.ListSystemTemplates)
-		templates.GET("/search", h.SearchTemplates)
-		templates.GET("/organization", middleware.RequireCompany(), h.ListOrganizationTemplates)
-		templates.GET("/:id", h.GetTemplate)
-	}
+	templates.GET("", h.ListSystemTemplates)
+	templates.GET("/search", h.SearchTemplates)
+	templates.GET("/organization", middleware.RequireCompany(), h.ListOrganizationTemplates)
+	templates.GET("/:id", h.GetTemplate)
 }
 
 // toTemplateResponse converts a template model to response

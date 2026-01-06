@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -36,7 +37,7 @@ func (r *MongoQuestionRepository) GetByID(ctx context.Context, id primitive.Obje
 	var question models.Question
 	filter := bson.M{"_id": id}
 	err := r.collection.FindOne(ctx, filter).Decode(&question)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, models.ErrQuestionNotFound
 	}
 	if err != nil {
@@ -83,7 +84,7 @@ func (r *MongoQuestionRepository) ListByQuestionnaire(ctx context.Context, quest
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var questions []models.Question
 	if err := cursor.All(ctx, &questions); err != nil {
@@ -105,7 +106,7 @@ func (r *MongoQuestionRepository) ListByQuestionnaireAndTopic(ctx context.Contex
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var questions []models.Question
 	if err := cursor.All(ctx, &questions); err != nil {
@@ -169,7 +170,7 @@ func (r *MongoQuestionRepository) CalculateMaxScore(ctx context.Context, questio
 	if err != nil {
 		return 0, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
 
 	var result struct {
 		Total int `bson:"total"`

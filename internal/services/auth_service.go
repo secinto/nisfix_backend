@@ -112,7 +112,7 @@ func (s *authService) RequestMagicLink(ctx context.Context, email string) error 
 	user, err := s.userRepo.GetByEmail(ctx, email)
 	if err != nil || user == nil {
 		// #SECURITY_CONCERN: Don't reveal if user exists - return success silently
-		return nil
+		return nil //nolint:nilerr // Security: intentional to prevent user enumeration
 	}
 
 	if !user.IsActive || user.IsDeleted() {
@@ -123,12 +123,12 @@ func (s *authService) RequestMagicLink(ctx context.Context, email string) error 
 	// Get organization
 	org, err := s.orgRepo.GetByID(ctx, user.OrganizationID)
 	if err != nil || org == nil || org.IsDeleted() {
-		return nil
+		return nil //nolint:nilerr // Security: intentional to prevent org enumeration
 	}
 
 	// Invalidate existing links for this email
-	if err := s.secureLinkRepo.InvalidateAllForEmail(ctx, email); err != nil {
-		return fmt.Errorf("failed to invalidate existing links: %w", err)
+	if invalidateErr := s.secureLinkRepo.InvalidateAllForEmail(ctx, email); invalidateErr != nil {
+		return fmt.Errorf("failed to invalidate existing links: %w", invalidateErr)
 	}
 
 	// Generate secure identifier
@@ -177,8 +177,8 @@ func (s *authService) VerifyMagicLink(ctx context.Context, identifier string) (*
 	}
 
 	// Mark as used immediately to prevent race conditions
-	if err := s.secureLinkRepo.MarkAsUsed(ctx, link.ID); err != nil {
-		return nil, nil, nil, fmt.Errorf("failed to mark link as used: %w", err)
+	if markErr := s.secureLinkRepo.MarkAsUsed(ctx, link.ID); markErr != nil {
+		return nil, nil, nil, fmt.Errorf("failed to mark link as used: %w", markErr)
 	}
 
 	// Get user
@@ -206,7 +206,7 @@ func (s *authService) VerifyMagicLink(ctx context.Context, identifier string) (*
 	}
 
 	// Update last login
-	if err := s.userRepo.UpdateLastLogin(ctx, user.ID); err != nil {
+	if updateErr := s.userRepo.UpdateLastLogin(ctx, user.ID); updateErr != nil { //nolint:staticcheck // Log error but don't fail login
 		// #TECHNICAL_DEBT: Log error but don't fail login
 	}
 

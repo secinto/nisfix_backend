@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -41,7 +42,7 @@ func (r *MongoSecureLinkRepository) GetByIdentifier(ctx context.Context, identif
 		"secure_identifier": identifier,
 	}
 	err := r.collection.FindOne(ctx, filter).Decode(&link)
-	if err == mongo.ErrNoDocuments {
+	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, models.ErrSecureLinkNotFound
 	}
 	if err != nil {

@@ -56,7 +56,7 @@ func (m *MockJWTService) ValidateAccessToken(tokenString string) (*auth.Claims, 
 }
 
 func (m *MockJWTService) ValidateRefreshToken(tokenString string) (*auth.RefreshClaims, error) {
-	return nil, nil
+	return nil, auth.ErrInvalidToken
 }
 
 func TestAuthMiddleware_ValidToken(t *testing.T) {
@@ -76,7 +76,7 @@ func TestAuthMiddleware_ValidToken(t *testing.T) {
 		c.Status(http.StatusOK)
 	})
 
-	req := httptest.NewRequest("GET", "/test", nil)
+	req := httptest.NewRequest("GET", "/test", http.NoBody)
 	req.Header.Set("Authorization", "Bearer valid-token")
 	w := httptest.NewRecorder()
 
@@ -96,7 +96,7 @@ func TestAuthMiddleware_MissingHeader(t *testing.T) {
 		c.Status(http.StatusOK)
 	})
 
-	req := httptest.NewRequest("GET", "/test", nil)
+	req := httptest.NewRequest("GET", "/test", http.NoBody)
 	w := httptest.NewRecorder()
 
 	router.ServeHTTP(w, req)
@@ -126,7 +126,7 @@ func TestAuthMiddleware_InvalidFormat(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req := httptest.NewRequest("GET", "/test", nil)
+			req := httptest.NewRequest("GET", "/test", http.NoBody)
 			req.Header.Set("Authorization", tt.header)
 			w := httptest.NewRecorder()
 
@@ -150,7 +150,7 @@ func TestAuthMiddleware_InvalidToken(t *testing.T) {
 		c.Status(http.StatusOK)
 	})
 
-	req := httptest.NewRequest("GET", "/test", nil)
+	req := httptest.NewRequest("GET", "/test", http.NoBody)
 	req.Header.Set("Authorization", "Bearer invalid-token")
 	w := httptest.NewRecorder()
 
@@ -172,7 +172,7 @@ func TestAuthMiddleware_ExpiredToken(t *testing.T) {
 		c.Status(http.StatusOK)
 	})
 
-	req := httptest.NewRequest("GET", "/test", nil)
+	req := httptest.NewRequest("GET", "/test", http.NoBody)
 	req.Header.Set("Authorization", "Bearer expired-token")
 	w := httptest.NewRecorder()
 
@@ -202,7 +202,7 @@ func TestOptionalAuthMiddleware_WithToken(t *testing.T) {
 		c.Status(http.StatusOK)
 	})
 
-	req := httptest.NewRequest("GET", "/test", nil)
+	req := httptest.NewRequest("GET", "/test", http.NoBody)
 	req.Header.Set("Authorization", "Bearer valid-token")
 	w := httptest.NewRecorder()
 
@@ -229,7 +229,7 @@ func TestOptionalAuthMiddleware_WithoutToken(t *testing.T) {
 		c.Status(http.StatusOK)
 	})
 
-	req := httptest.NewRequest("GET", "/test", nil)
+	req := httptest.NewRequest("GET", "/test", http.NoBody)
 	w := httptest.NewRecorder()
 
 	router.ServeHTTP(w, req)
@@ -253,7 +253,7 @@ func TestRequireRole_Allowed(t *testing.T) {
 		c.Status(http.StatusOK)
 	})
 
-	req := httptest.NewRequest("GET", "/test", nil)
+	req := httptest.NewRequest("GET", "/test", http.NoBody)
 	w := httptest.NewRecorder()
 
 	router.ServeHTTP(w, req)
@@ -274,7 +274,7 @@ func TestRequireRole_Denied(t *testing.T) {
 		c.Status(http.StatusOK)
 	})
 
-	req := httptest.NewRequest("GET", "/test", nil)
+	req := httptest.NewRequest("GET", "/test", http.NoBody)
 	w := httptest.NewRecorder()
 
 	router.ServeHTTP(w, req)
@@ -291,7 +291,7 @@ func TestRequireRole_NoRole(t *testing.T) {
 		c.Status(http.StatusOK)
 	})
 
-	req := httptest.NewRequest("GET", "/test", nil)
+	req := httptest.NewRequest("GET", "/test", http.NoBody)
 	w := httptest.NewRecorder()
 
 	router.ServeHTTP(w, req)
@@ -312,7 +312,7 @@ func TestRequireOrgType_Allowed(t *testing.T) {
 		c.Status(http.StatusOK)
 	})
 
-	req := httptest.NewRequest("GET", "/test", nil)
+	req := httptest.NewRequest("GET", "/test", http.NoBody)
 	w := httptest.NewRecorder()
 
 	router.ServeHTTP(w, req)
@@ -333,7 +333,7 @@ func TestRequireOrgType_Denied(t *testing.T) {
 		c.Status(http.StatusOK)
 	})
 
-	req := httptest.NewRequest("GET", "/test", nil)
+	req := httptest.NewRequest("GET", "/test", http.NoBody)
 	w := httptest.NewRecorder()
 
 	router.ServeHTTP(w, req)
@@ -353,7 +353,7 @@ func TestRequestID_GeneratesNew(t *testing.T) {
 		c.Status(http.StatusOK)
 	})
 
-	req := httptest.NewRequest("GET", "/test", nil)
+	req := httptest.NewRequest("GET", "/test", http.NoBody)
 	w := httptest.NewRecorder()
 
 	router.ServeHTTP(w, req)
@@ -379,7 +379,7 @@ func TestRequestID_UsesExisting(t *testing.T) {
 		c.Status(http.StatusOK)
 	})
 
-	req := httptest.NewRequest("GET", "/test", nil)
+	req := httptest.NewRequest("GET", "/test", http.NoBody)
 	req.Header.Set("X-Request-ID", existingID)
 	w := httptest.NewRecorder()
 
@@ -397,7 +397,7 @@ func TestCORS_AllowedOrigin(t *testing.T) {
 		c.Status(http.StatusOK)
 	})
 
-	req := httptest.NewRequest("GET", "/test", nil)
+	req := httptest.NewRequest("GET", "/test", http.NoBody)
 	req.Header.Set("Origin", "http://localhost:3000")
 	w := httptest.NewRecorder()
 
@@ -415,7 +415,7 @@ func TestCORS_Preflight(t *testing.T) {
 		c.Status(http.StatusOK)
 	})
 
-	req := httptest.NewRequest("OPTIONS", "/test", nil)
+	req := httptest.NewRequest("OPTIONS", "/test", http.NoBody)
 	req.Header.Set("Origin", "http://example.com")
 	w := httptest.NewRecorder()
 
@@ -433,7 +433,7 @@ func TestSecureHeaders(t *testing.T) {
 		c.Status(http.StatusOK)
 	})
 
-	req := httptest.NewRequest("GET", "/test", nil)
+	req := httptest.NewRequest("GET", "/test", http.NoBody)
 	w := httptest.NewRecorder()
 
 	router.ServeHTTP(w, req)
@@ -459,7 +459,7 @@ func TestRecovery(t *testing.T) {
 		panic("test panic")
 	})
 
-	req := httptest.NewRequest("GET", "/test", nil)
+	req := httptest.NewRequest("GET", "/test", http.NoBody)
 	w := httptest.NewRecorder()
 
 	router.ServeHTTP(w, req)
@@ -479,7 +479,7 @@ func TestRateLimiter(t *testing.T) {
 	})
 
 	// First request - should pass
-	req := httptest.NewRequest("GET", "/test", nil)
+	req := httptest.NewRequest("GET", "/test", http.NoBody)
 	req.RemoteAddr = "192.168.1.1:1234"
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
@@ -488,7 +488,7 @@ func TestRateLimiter(t *testing.T) {
 	}
 
 	// Second request - should pass
-	req = httptest.NewRequest("GET", "/test", nil)
+	req = httptest.NewRequest("GET", "/test", http.NoBody)
 	req.RemoteAddr = "192.168.1.1:1234"
 	w = httptest.NewRecorder()
 	router.ServeHTTP(w, req)
@@ -497,7 +497,7 @@ func TestRateLimiter(t *testing.T) {
 	}
 
 	// Third request - should be rate limited
-	req = httptest.NewRequest("GET", "/test", nil)
+	req = httptest.NewRequest("GET", "/test", http.NoBody)
 	req.RemoteAddr = "192.168.1.1:1234"
 	w = httptest.NewRecorder()
 	router.ServeHTTP(w, req)
@@ -522,7 +522,7 @@ func TestGetUserID_Valid(t *testing.T) {
 		c.Status(http.StatusOK)
 	})
 
-	req := httptest.NewRequest("GET", "/test", nil)
+	req := httptest.NewRequest("GET", "/test", http.NoBody)
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 
@@ -543,7 +543,7 @@ func TestGetUserID_NotSet(t *testing.T) {
 		c.Status(http.StatusOK)
 	})
 
-	req := httptest.NewRequest("GET", "/test", nil)
+	req := httptest.NewRequest("GET", "/test", http.NoBody)
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 
@@ -579,7 +579,7 @@ func TestIsAdmin(t *testing.T) {
 				c.Status(http.StatusOK)
 			})
 
-			req := httptest.NewRequest("GET", "/test", nil)
+			req := httptest.NewRequest("GET", "/test", http.NoBody)
 			w := httptest.NewRecorder()
 			router.ServeHTTP(w, req)
 
@@ -614,7 +614,7 @@ func TestIsCompanyUser(t *testing.T) {
 				c.Status(http.StatusOK)
 			})
 
-			req := httptest.NewRequest("GET", "/test", nil)
+			req := httptest.NewRequest("GET", "/test", http.NoBody)
 			w := httptest.NewRecorder()
 			router.ServeHTTP(w, req)
 
