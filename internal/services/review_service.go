@@ -6,16 +6,17 @@ import (
 	"errors"
 	"fmt"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"github.com/checkfix-tools/nisfix_backend/internal/models"
 	"github.com/checkfix-tools/nisfix_backend/internal/repository"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Custom errors for review service
 var (
-	ErrCannotReview          = errors.New("cannot review this requirement")
-	ErrAlreadyReviewed       = errors.New("requirement has already been reviewed")
-	ErrNoSubmission          = errors.New("no submission to review")
+	ErrCannotReview    = errors.New("cannot review this requirement")
+	ErrAlreadyReviewed = errors.New("requirement has already been reviewed")
+	ErrNoSubmission    = errors.New("no submission to review")
 )
 
 // ReviewService handles requirement review business logic

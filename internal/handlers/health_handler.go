@@ -7,8 +7,15 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/checkfix-tools/nisfix_backend/internal/database"
 	"github.com/gin-gonic/gin"
+
+	"github.com/checkfix-tools/nisfix_backend/internal/database"
+)
+
+// Health status constants
+const (
+	statusHealthy   = "healthy"
+	statusUnhealthy = "unhealthy"
 )
 
 // HealthHandler handles health check endpoints
@@ -55,10 +62,10 @@ type Service struct {
 
 // SystemInfo represents system information
 type SystemInfo struct {
-	GoVersion   string `json:"go_version"`
-	NumCPU      int    `json:"num_cpu"`
-	NumGoroutine int   `json:"num_goroutine"`
-	MemAllocMB  float64 `json:"mem_alloc_mb"`
+	GoVersion    string  `json:"go_version"`
+	NumCPU       int     `json:"num_cpu"`
+	NumGoroutine int     `json:"num_goroutine"`
+	MemAllocMB   float64 `json:"mem_alloc_mb"`
 }
 
 // Ping handles GET /health/ping
@@ -83,7 +90,7 @@ func (h *HealthHandler) Ping(c *gin.Context) {
 // @Router /health [get]
 func (h *HealthHandler) Health(c *gin.Context) {
 	c.JSON(http.StatusOK, HealthResponse{
-		Status:    "healthy",
+		Status:    statusHealthy,
 		Timestamp: time.Now().UTC().Format(time.RFC3339),
 		Version:   h.version,
 	})
@@ -106,10 +113,10 @@ func (h *HealthHandler) Ready(c *gin.Context) {
 
 	// Check database
 	if err := h.dbClient.Ping(ctx); err != nil {
-		services["mongodb"] = "unhealthy"
+		services["mongodb"] = statusUnhealthy
 		allHealthy = false
 	} else {
-		services["mongodb"] = "healthy"
+		services["mongodb"] = statusHealthy
 	}
 
 	status := "ready"
@@ -159,13 +166,13 @@ func (h *HealthHandler) Detailed(c *gin.Context) {
 	dbStart := time.Now()
 	if err := h.dbClient.Ping(ctx); err != nil {
 		services["mongodb"] = Service{
-			Status:      "unhealthy",
+			Status:      statusUnhealthy,
 			Description: err.Error(),
 		}
 		allHealthy = false
 	} else {
 		services["mongodb"] = Service{
-			Status:  "healthy",
+			Status:  statusHealthy,
 			Latency: time.Since(dbStart).String(),
 		}
 	}
@@ -174,7 +181,7 @@ func (h *HealthHandler) Detailed(c *gin.Context) {
 	var memStats runtime.MemStats
 	runtime.ReadMemStats(&memStats)
 
-	status := "healthy"
+	status := statusHealthy
 	if !allHealthy {
 		status = "degraded"
 	}

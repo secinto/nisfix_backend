@@ -5,8 +5,9 @@ package repository
 import (
 	"context"
 
-	"github.com/checkfix-tools/nisfix_backend/internal/models"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+
+	"github.com/checkfix-tools/nisfix_backend/internal/models"
 )
 
 // PaginationOptions contains pagination parameters

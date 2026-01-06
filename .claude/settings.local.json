@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__morph-mcp__edit_file",
+      "Bash(go mod tidy:*)",
+      "Bash(go get:*)",
+      "Bash(swag init:*)",
+      "Bash(go vet:*)",
+      "Bash(go mod verify:*)",
+      "Bash(git describe:*)",
+      "Bash(chmod:*)",
+      "Bash(make info:*)",
+      "Bash(make build:*)",
+      "Bash(make test:*)",
+      "Bash(make help:*)",
+      "Bash(./scripts/generate-keys.sh:*)",
+      "Bash(./bin/nisfix-backend:*)",
+      "Bash(make version:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(make vet:*)",
+      "Bash(golangci-lint run:*)",
+      "Bash(gofmt:*)",
+      "Bash(goimports:*)",
+      "Bash(go install:*)"
+    ]
+  }
+}

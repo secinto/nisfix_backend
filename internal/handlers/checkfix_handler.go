@@ -6,11 +6,12 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"github.com/checkfix-tools/nisfix_backend/internal/middleware"
 	"github.com/checkfix-tools/nisfix_backend/internal/models"
 	"github.com/checkfix-tools/nisfix_backend/internal/services"
-	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // CheckFixHandler handles CheckFix integration endpoints
@@ -28,13 +29,13 @@ func NewCheckFixHandler(checkFixService services.CheckFixService) *CheckFixHandl
 
 // CheckFixStatusResponse represents the CheckFix status response
 type CheckFixStatusResponse struct {
-	IsLinked         bool                       `json:"is_linked"`
-	AccountID        string                     `json:"account_id,omitempty"`
-	Domain           string                     `json:"domain,omitempty"`
-	LinkedAt         *time.Time                 `json:"linked_at,omitempty"`
-	LatestGrade      *string                    `json:"latest_grade,omitempty"`
-	LatestVerifiedAt *time.Time                 `json:"latest_verified_at,omitempty"`
-	LatestScore      *int                       `json:"latest_score,omitempty"`
+	IsLinked         bool                          `json:"is_linked"`
+	AccountID        string                        `json:"account_id,omitempty"`
+	Domain           string                        `json:"domain,omitempty"`
+	LinkedAt         *time.Time                    `json:"linked_at,omitempty"`
+	LatestGrade      *string                       `json:"latest_grade,omitempty"`
+	LatestVerifiedAt *time.Time                    `json:"latest_verified_at,omitempty"`
+	LatestScore      *int                          `json:"latest_score,omitempty"`
 	Verification     *CheckFixVerificationResponse `json:"verification,omitempty"`
 }
 
@@ -83,9 +84,9 @@ type SubmitCheckFixRequest struct {
 
 // CheckFixSubmissionResponse represents the submission result
 type CheckFixSubmissionResponse struct {
-	Passed       bool                         `json:"passed"`
-	Grade        string                       `json:"grade"`
-	Message      string                       `json:"message"`
+	Passed       bool                          `json:"passed"`
+	Grade        string                        `json:"grade"`
+	Message      string                        `json:"message"`
 	Verification *CheckFixVerificationResponse `json:"verification"`
 }
 
@@ -181,7 +182,14 @@ func (h *CheckFixHandler) LinkAccount(c *gin.Context) {
 	}
 
 	// Return updated status
-	status, _ := h.checkFixService.GetLinkStatus(c.Request.Context(), supplierID)
+	status, err := h.checkFixService.GetLinkStatus(c.Request.Context(), supplierID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Error:   "internal_error",
+			Message: "Failed to get link status",
+		})
+		return
+	}
 	resp := CheckFixStatusResponse{
 		IsLinked:  status.IsLinked,
 		AccountID: status.AccountID,
@@ -319,7 +327,7 @@ func (h *CheckFixHandler) SubmitCheckFix(c *gin.Context) {
 	}
 
 	var req SubmitCheckFixRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if bindErr := c.ShouldBindJSON(&req); bindErr != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{
 			Error:   "invalid_request",
 			Message: "Report hash is required",
@@ -406,26 +414,21 @@ func (h *CheckFixHandler) RegisterRoutes(rg *gin.RouterGroup, authMiddleware gin
 	supplier := rg.Group("/supplier")
 	supplier.Use(authMiddleware)
 	supplier.Use(middleware.RequireSupplier())
-	{
-		checkfix := supplier.Group("/checkfix")
-		{
-			checkfix.GET("/status", h.GetStatus)
-			checkfix.POST("/link", h.LinkAccount)
-			checkfix.DELETE("/link", h.UnlinkAccount)
-			checkfix.POST("/verify", h.VerifyReport)
-		}
 
-		// Submit CheckFix for requirement
-		supplier.POST("/requirements/:id/checkfix", h.SubmitCheckFix)
-	}
+	checkfix := supplier.Group("/checkfix")
+	checkfix.GET("/status", h.GetStatus)
+	checkfix.POST("/link", h.LinkAccount)
+	checkfix.DELETE("/link", h.UnlinkAccount)
+	checkfix.POST("/verify", h.VerifyReport)
+
+	// Submit CheckFix for requirement
+	supplier.POST("/requirements/:id/checkfix", h.SubmitCheckFix)
 
 	// Company routes for viewing verifications
 	requirements := rg.Group("/requirements")
 	requirements.Use(authMiddleware)
 	requirements.Use(middleware.RequireCompany())
-	{
-		requirements.GET("/:id/checkfix", h.GetRequirementVerification)
-	}
+	requirements.GET("/:id/checkfix", h.GetRequirementVerification)
 }
 
 // toCheckFixVerificationResponse converts a verification to API response

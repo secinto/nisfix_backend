@@ -189,7 +189,7 @@ func (s *jwtService) ValidateAccessToken(tokenString string) (*Claims, error) {
 		if errors.Is(err, jwt.ErrTokenExpired) {
 			return nil, ErrTokenExpired
 		}
-		return nil, fmt.Errorf("%w: %v", ErrInvalidToken, err)
+		return nil, fmt.Errorf("%w: %w", ErrInvalidToken, err)
 	}
 
 	claims, ok := token.Claims.(*Claims)
@@ -213,7 +213,7 @@ func (s *jwtService) ValidateRefreshToken(tokenString string) (*RefreshClaims, e
 		if errors.Is(err, jwt.ErrTokenExpired) {
 			return nil, ErrTokenExpired
 		}
-		return nil, fmt.Errorf("%w: %v", ErrInvalidToken, err)
+		return nil, fmt.Errorf("%w: %w", ErrInvalidToken, err)
 	}
 
 	claims, ok := token.Claims.(*RefreshClaims)
@@ -252,7 +252,7 @@ func loadPrivateKey(path string) (*rsa.PrivateKey, error) {
 	// Try PKCS#8 format
 	key, err := x509.ParsePKCS8PrivateKey(block.Bytes)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrInvalidKeyFormat, err)
+		return nil, fmt.Errorf("%w: %w", ErrInvalidKeyFormat, err)
 	}
 
 	rsaKey, ok := key.(*rsa.PrivateKey)
@@ -291,7 +291,7 @@ func loadPublicKey(path string) (*rsa.PublicKey, error) {
 	// Try PKCS#1 format
 	rsaKey, err := x509.ParsePKCS1PublicKey(block.Bytes)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrInvalidKeyFormat, err)
+		return nil, fmt.Errorf("%w: %w", ErrInvalidKeyFormat, err)
 	}
 
 	return rsaKey, nil

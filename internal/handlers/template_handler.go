@@ -7,11 +7,12 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"github.com/checkfix-tools/nisfix_backend/internal/middleware"
 	"github.com/checkfix-tools/nisfix_backend/internal/models"
 	"github.com/checkfix-tools/nisfix_backend/internal/repository"
-	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // TemplateHandler handles questionnaire template endpoints
@@ -29,20 +30,20 @@ func NewTemplateHandler(templateRepo repository.QuestionnaireTemplateRepository)
 
 // TemplateResponse represents a template in API responses
 type TemplateResponse struct {
-	ID                  string                 `json:"id"`
-	Name                string                 `json:"name"`
-	Description         string                 `json:"description,omitempty"`
-	Category            string                 `json:"category"`
-	Version             string                 `json:"version"`
-	IsSystem            bool                   `json:"is_system"`
-	DefaultPassingScore int                    `json:"default_passing_score"`
-	EstimatedMinutes    int                    `json:"estimated_minutes"`
+	ID                  string                  `json:"id"`
+	Name                string                  `json:"name"`
+	Description         string                  `json:"description,omitempty"`
+	Category            string                  `json:"category"`
+	Version             string                  `json:"version"`
+	IsSystem            bool                    `json:"is_system"`
+	DefaultPassingScore int                     `json:"default_passing_score"`
+	EstimatedMinutes    int                     `json:"estimated_minutes"`
 	Topics              []TemplateTopicResponse `json:"topics"`
-	Tags                []string               `json:"tags,omitempty"`
-	UsageCount          int                    `json:"usage_count"`
-	CreatedAt           time.Time              `json:"created_at"`
-	UpdatedAt           time.Time              `json:"updated_at"`
-	PublishedAt         *time.Time             `json:"published_at,omitempty"`
+	Tags                []string                `json:"tags,omitempty"`
+	UsageCount          int                     `json:"usage_count"`
+	CreatedAt           time.Time               `json:"created_at"`
+	UpdatedAt           time.Time               `json:"updated_at"`
+	PublishedAt         *time.Time              `json:"published_at,omitempty"`
 }
 
 // TemplateTopicResponse represents a template topic in responses

@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/checkfix-tools/nisfix_backend/internal/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/checkfix-tools/nisfix_backend/internal/models"
 )
 
 // IndexManager handles MongoDB index creation and management
@@ -429,7 +430,12 @@ func (m *IndexManager) GetIndexInfo(ctx context.Context, collectionName string) 
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer func() {
+		if closeErr := cursor.Close(ctx); closeErr != nil {
+			// Closing cursor error is logged but not returned
+			_ = closeErr
+		}
+	}()
 
 	var indexes []bson.M
 	if err := cursor.All(ctx, &indexes); err != nil {

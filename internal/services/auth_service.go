@@ -10,21 +10,22 @@ import (
 	"fmt"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"github.com/checkfix-tools/nisfix_backend/internal/auth"
 	"github.com/checkfix-tools/nisfix_backend/internal/models"
 	"github.com/checkfix-tools/nisfix_backend/internal/repository"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Custom errors for auth service
 var (
-	ErrUserNotFound           = errors.New("user not found")
-	ErrUserInactive           = errors.New("user is inactive")
-	ErrOrganizationNotFound   = errors.New("organization not found")
-	ErrOrganizationInactive   = errors.New("organization is inactive")
-	ErrInvalidSecureLink      = errors.New("invalid or expired secure link")
-	ErrRateLimitExceeded      = errors.New("rate limit exceeded for magic links")
-	ErrInvalidRefreshToken    = errors.New("invalid refresh token")
+	ErrUserNotFound         = errors.New("user not found")
+	ErrUserInactive         = errors.New("user is inactive")
+	ErrOrganizationNotFound = errors.New("organization not found")
+	ErrOrganizationInactive = errors.New("organization is inactive")
+	ErrInvalidSecureLink    = errors.New("invalid or expired secure link")
+	ErrRateLimitExceeded    = errors.New("rate limit exceeded for magic links")
+	ErrInvalidRefreshToken  = errors.New("invalid refresh token")
 )
 
 // AuthService handles authentication logic

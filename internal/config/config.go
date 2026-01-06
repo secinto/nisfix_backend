@@ -20,9 +20,9 @@ type Config struct {
 	DatabaseName string `envconfig:"DATABASE_NAME" default:"nisfix"`
 
 	// JWT configuration
-	JWTPrivateKeyPath string        `envconfig:"JWT_PRIVATE_KEY_PATH" required:"true"`
-	JWTPublicKeyPath  string        `envconfig:"JWT_PUBLIC_KEY_PATH" required:"true"`
-	AccessTokenExpiry time.Duration `envconfig:"ACCESS_TOKEN_EXPIRY" default:"1h"`
+	JWTPrivateKeyPath  string        `envconfig:"JWT_PRIVATE_KEY_PATH" required:"true"`
+	JWTPublicKeyPath   string        `envconfig:"JWT_PUBLIC_KEY_PATH" required:"true"`
+	AccessTokenExpiry  time.Duration `envconfig:"ACCESS_TOKEN_EXPIRY" default:"1h"`
 	RefreshTokenExpiry time.Duration `envconfig:"REFRESH_TOKEN_EXPIRY" default:"720h"` // 30 days
 
 	// Mail service configuration
@@ -53,7 +53,7 @@ type Config struct {
 var (
 	instance *Config
 	once     sync.Once
-	initErr  error
+	errInit  error
 )
 
 // Load loads configuration from environment variables.
@@ -61,23 +61,23 @@ var (
 func Load() (*Config, error) {
 	once.Do(func() {
 		instance = &Config{}
-		initErr = envconfig.Process("NISFIX", instance)
-		if initErr != nil {
+		errInit = envconfig.Process("NISFIX", instance)
+		if errInit != nil {
 			return
 		}
 
 		// Validate required file paths exist
 		if _, err := os.Stat(instance.JWTPrivateKeyPath); os.IsNotExist(err) {
-			initErr = fmt.Errorf("JWT private key file not found: %s", instance.JWTPrivateKeyPath)
+			errInit = fmt.Errorf("JWT private key file not found: %s", instance.JWTPrivateKeyPath)
 			return
 		}
 		if _, err := os.Stat(instance.JWTPublicKeyPath); os.IsNotExist(err) {
-			initErr = fmt.Errorf("JWT public key file not found: %s", instance.JWTPublicKeyPath)
+			errInit = fmt.Errorf("JWT public key file not found: %s", instance.JWTPublicKeyPath)
 			return
 		}
 	})
 
-	return instance, initErr
+	return instance, errInit
 }
 
 // GetConfig returns the loaded configuration.

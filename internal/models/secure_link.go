@@ -46,9 +46,9 @@ func (slt SecureLinkType) IsValid() bool {
 // #DATA_ASSUMPTION: Auth links expire in 15 minutes, invitation links in 7 days
 // #INDEX_STRATEGY: TTL index on expires_at for automatic cleanup
 type SecureLink struct {
-	ID               primitive.ObjectID  `bson:"_id,omitempty" json:"id"`
-	SecureIdentifier string              `bson:"secure_identifier" json:"secure_identifier"`
-	Type             SecureLinkType      `bson:"type" json:"type"`
+	ID               primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	SecureIdentifier string             `bson:"secure_identifier" json:"secure_identifier"`
+	Type             SecureLinkType     `bson:"type" json:"type"`
 
 	// Target
 	Email          string              `bson:"email" json:"email"`

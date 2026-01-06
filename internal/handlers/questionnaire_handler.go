@@ -7,12 +7,18 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"github.com/checkfix-tools/nisfix_backend/internal/middleware"
 	"github.com/checkfix-tools/nisfix_backend/internal/models"
 	"github.com/checkfix-tools/nisfix_backend/internal/repository"
 	"github.com/checkfix-tools/nisfix_backend/internal/services"
-	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+// Sort direction constants
+const (
+	sortDirectionAsc = "asc"
 )
 
 // QuestionnaireHandler handles questionnaire endpoints
@@ -30,11 +36,11 @@ func NewQuestionnaireHandler(questionnaireService services.QuestionnaireService)
 
 // CreateQuestionnaireRequest represents the create questionnaire request body
 type CreateQuestionnaireRequest struct {
-	Name         string  `json:"name" binding:"required"`
-	Description  string  `json:"description,omitempty"`
-	PassingScore int     `json:"passing_score,omitempty"`
-	ScoringMode  string  `json:"scoring_mode,omitempty"`
-	TemplateID   *string `json:"template_id,omitempty"`
+	Name         string         `json:"name" binding:"required"`
+	Description  string         `json:"description,omitempty"`
+	PassingScore int            `json:"passing_score,omitempty"`
+	ScoringMode  string         `json:"scoring_mode,omitempty"`
+	TemplateID   *string        `json:"template_id,omitempty"`
 	Topics       []TopicRequest `json:"topics,omitempty"`
 }
 
@@ -258,7 +264,7 @@ func (h *QuestionnaireHandler) ListQuestionnaires(c *gin.Context) {
 	if sortBy := c.Query("sort_by"); sortBy != "" {
 		opts.SortBy = sortBy
 	}
-	if sortDir := c.Query("sort_dir"); sortDir == "asc" {
+	if sortDir := c.Query("sort_dir"); sortDir == sortDirectionAsc {
 		opts.SortDir = 1
 	}
 
@@ -388,7 +394,7 @@ func (h *QuestionnaireHandler) UpdateQuestionnaire(c *gin.Context) {
 	}
 
 	var req UpdateQuestionnaireRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if bindErr := c.ShouldBindJSON(&req); bindErr != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{
 			Error:   "invalid_request",
 			Message: "Invalid request body",

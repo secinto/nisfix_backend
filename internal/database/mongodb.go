@@ -33,12 +33,12 @@ const (
 // Config holds MongoDB connection configuration
 // #DATA_ASSUMPTION: Production uses replica set for high availability
 type Config struct {
-	URI                string
-	Database           string
-	MaxPoolSize        uint64
-	MinPoolSize        uint64
-	MaxConnIdleTime    time.Duration
-	ConnectTimeout     time.Duration
+	URI                    string
+	Database               string
+	MaxPoolSize            uint64
+	MinPoolSize            uint64
+	MaxConnIdleTime        time.Duration
+	ConnectTimeout         time.Duration
 	ServerSelectionTimeout time.Duration
 }
 

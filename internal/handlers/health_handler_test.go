@@ -21,7 +21,7 @@ func TestHealthHandler_Ping(t *testing.T) {
 	router := gin.New()
 	router.GET("/health/ping", handler.Ping)
 
-	req := httptest.NewRequest("GET", "/health/ping", nil)
+	req := httptest.NewRequest("GET", "/health/ping", http.NoBody)
 	w := httptest.NewRecorder()
 
 	router.ServeHTTP(w, req)
@@ -48,7 +48,7 @@ func TestHealthHandler_Health(t *testing.T) {
 	router := gin.New()
 	router.GET("/health", handler.Health)
 
-	req := httptest.NewRequest("GET", "/health", nil)
+	req := httptest.NewRequest("GET", "/health", http.NoBody)
 	w := httptest.NewRecorder()
 
 	router.ServeHTTP(w, req)
@@ -83,7 +83,7 @@ func TestHealthHandler_Live(t *testing.T) {
 	router := gin.New()
 	router.GET("/health/live", handler.Live)
 
-	req := httptest.NewRequest("GET", "/health/live", nil)
+	req := httptest.NewRequest("GET", "/health/live", http.NoBody)
 	w := httptest.NewRecorder()
 
 	router.ServeHTTP(w, req)

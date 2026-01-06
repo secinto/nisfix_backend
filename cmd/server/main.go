@@ -1,6 +1,3 @@
-// Package main is the entry point for the NisFix Backend API server.
-// #IMPLEMENTATION_DECISION: Standard Go main package structure with graceful shutdown
-
 // @title NisFix Backend API
 // @version 1.0
 // @description B2B Supplier Security Portal API - Companies manage supplier security requirements through questionnaires and CheckFix reports
@@ -20,17 +17,19 @@
 // @name Authorization
 // @description Enter your bearer token in the format: Bearer {token}
 
+// Package main is the entry point for the NisFix Backend API server.
 package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/gin-gonic/gin"
 
 	"github.com/checkfix-tools/nisfix_backend/internal/auth"
 	"github.com/checkfix-tools/nisfix_backend/internal/config"
@@ -39,12 +38,12 @@ import (
 	"github.com/checkfix-tools/nisfix_backend/internal/middleware"
 	"github.com/checkfix-tools/nisfix_backend/internal/repository"
 	"github.com/checkfix-tools/nisfix_backend/internal/services"
-	"github.com/gin-gonic/gin"
 
 	// Swagger docs
-	_ "github.com/checkfix-tools/nisfix_backend/docs"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+
+	_ "github.com/checkfix-tools/nisfix_backend/docs"
 )
 
 // Build-time variables (set via ldflags)
@@ -83,25 +82,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
-	defer func() {
-		if err := dbClient.Close(ctx); err != nil {
-			log.Printf("Error closing database connection: %v", err)
-		}
-	}()
 
-	// Ensure indexes
-	log.Println("Creating database indexes...")
-	if err := dbClient.EnsureIndexes(ctx); err != nil {
-		log.Printf("Warning: Failed to create indexes: %v", err)
-	}
-
-	// Seed initial data (questionnaire templates)
-	log.Println("Seeding initial data...")
-	if err := dbClient.SeedData(ctx); err != nil {
-		log.Printf("Warning: Failed to seed data: %v", err)
-	}
-
-	// Initialize JWT service
+	// Initialize JWT service early (before defer) to avoid exitAfterDefer issue
 	jwtCfg := auth.JWTConfig{
 		PrivateKeyPath:     cfg.JWTPrivateKeyPath,
 		PublicKeyPath:      cfg.JWTPublicKeyPath,
@@ -112,7 +94,28 @@ func main() {
 
 	jwtService, err := auth.NewJWTService(jwtCfg)
 	if err != nil {
+		if closeErr := dbClient.Close(ctx); closeErr != nil {
+			log.Printf("Error closing database connection: %v", closeErr)
+		}
 		log.Fatalf("Failed to initialize JWT service: %v", err)
+	}
+
+	defer func() {
+		if closeErr := dbClient.Close(ctx); closeErr != nil {
+			log.Printf("Error closing database connection: %v", closeErr)
+		}
+	}()
+
+	// Ensure indexes
+	log.Println("Creating database indexes...")
+	if indexErr := dbClient.EnsureIndexes(ctx); indexErr != nil {
+		log.Printf("Warning: Failed to create indexes: %v", indexErr)
+	}
+
+	// Seed initial data (questionnaire templates)
+	log.Println("Seeding initial data...")
+	if seedErr := dbClient.SeedData(ctx); seedErr != nil {
+		log.Printf("Warning: Failed to seed data: %v", seedErr)
 	}
 
 	// Initialize repositories
@@ -292,20 +295,4 @@ func main() {
 	}
 
 	log.Println("Server shutdown complete")
-}
-
-// printBanner prints the startup banner
-func printBanner(version, port, env string) {
-	banner := `
-    _   ___ ___  ___ _____  __
-   | \ | |_   _/ __|  ___| \ \/ /
-   |  \| | | | \__ \ |__    \  /
-   | |\  |_| |_|___/|  __|   /  \
-   |_| \_|_____|    |_|     /_/\_\
-
-   NisFix Backend API v%s
-   Port: %s | Environment: %s
-   ================================
-`
-	fmt.Printf(banner, version, port, env)
 }

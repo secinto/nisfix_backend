@@ -6,10 +6,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/checkfix-tools/nisfix_backend/internal/models"
-	"github.com/checkfix-tools/nisfix_backend/internal/repository"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+
+	"github.com/checkfix-tools/nisfix_backend/internal/models"
+	"github.com/checkfix-tools/nisfix_backend/internal/repository"
 )
 
 // Custom errors for questionnaire service
@@ -80,9 +81,9 @@ type CreateQuestionnaireRequest struct {
 
 // UpdateQuestionnaireRequest represents the request to update a questionnaire
 type UpdateQuestionnaireRequest struct {
-	Name         *string                      `json:"name,omitempty"`
-	Description  *string                      `json:"description,omitempty"`
-	PassingScore *int                         `json:"passing_score,omitempty"`
+	Name         *string                     `json:"name,omitempty"`
+	Description  *string                     `json:"description,omitempty"`
+	PassingScore *int                        `json:"passing_score,omitempty"`
 	Topics       []models.QuestionnaireTopic `json:"topics,omitempty"`
 }
 
@@ -100,12 +101,12 @@ type CreateQuestionRequest struct {
 
 // UpdateQuestionRequest represents the request to update a question
 type UpdateQuestionRequest struct {
-	TopicID     *string                  `json:"topic_id,omitempty"`
-	Text        *string                  `json:"text,omitempty"`
-	Description *string                  `json:"description,omitempty"`
-	HelpText    *string                  `json:"help_text,omitempty"`
-	Weight      *int                     `json:"weight,omitempty"`
-	IsMustPass  *bool                    `json:"is_must_pass,omitempty"`
+	TopicID     *string                 `json:"topic_id,omitempty"`
+	Text        *string                 `json:"text,omitempty"`
+	Description *string                 `json:"description,omitempty"`
+	HelpText    *string                 `json:"help_text,omitempty"`
+	Weight      *int                    `json:"weight,omitempty"`
+	IsMustPass  *bool                   `json:"is_must_pass,omitempty"`
 	Options     []models.QuestionOption `json:"options,omitempty"`
 }
 

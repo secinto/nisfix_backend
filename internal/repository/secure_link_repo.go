@@ -4,10 +4,11 @@ import (
 	"context"
 	"time"
 
-	"github.com/checkfix-tools/nisfix_backend/internal/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+
+	"github.com/checkfix-tools/nisfix_backend/internal/models"
 )
 
 // MongoSecureLinkRepository implements SecureLinkRepository for MongoDB

@@ -6,9 +6,10 @@ import (
 	"fmt"
 	"log"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"github.com/checkfix-tools/nisfix_backend/internal/models"
 	"github.com/checkfix-tools/nisfix_backend/internal/repository"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // AuditService handles audit logging

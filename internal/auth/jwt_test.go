@@ -5,6 +5,7 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"errors"
 	"os"
 	"path/filepath"
 	"testing"
@@ -41,9 +42,9 @@ func generateTestKeys(t *testing.T) *testKeyPair {
 		Type:  "RSA PRIVATE KEY",
 		Bytes: privateKeyBytes,
 	})
-	if err := os.WriteFile(privateKeyPath, privatePEM, 0600); err != nil {
+	if writeErr := os.WriteFile(privateKeyPath, privatePEM, 0o600); writeErr != nil {
 		os.RemoveAll(tmpDir)
-		t.Fatalf("Failed to write private key: %v", err)
+		t.Fatalf("Failed to write private key: %v", writeErr)
 	}
 
 	// Write public key
@@ -57,7 +58,7 @@ func generateTestKeys(t *testing.T) *testKeyPair {
 		Type:  "PUBLIC KEY",
 		Bytes: publicKeyBytes,
 	})
-	if err := os.WriteFile(publicKeyPath, publicPEM, 0644); err != nil {
+	if err := os.WriteFile(publicKeyPath, publicPEM, 0o644); err != nil {
 		os.RemoveAll(tmpDir)
 		t.Fatalf("Failed to write public key: %v", err)
 	}
@@ -325,13 +326,13 @@ func TestLoadPrivateKey_InvalidFormat(t *testing.T) {
 	defer os.Remove(tmpFile.Name())
 
 	// Write invalid PEM data
-	if _, err := tmpFile.WriteString("not valid pem data"); err != nil {
-		t.Fatalf("Failed to write temp file: %v", err)
+	if _, writeErr := tmpFile.WriteString("not valid pem data"); writeErr != nil {
+		t.Fatalf("Failed to write temp file: %v", writeErr)
 	}
 	tmpFile.Close()
 
 	_, err = loadPrivateKey(tmpFile.Name())
-	if err != ErrInvalidKeyFormat {
+	if !errors.Is(err, ErrInvalidKeyFormat) {
 		t.Errorf("loadPrivateKey() error = %v, want ErrInvalidKeyFormat", err)
 	}
 }
@@ -344,27 +345,27 @@ func TestLoadPublicKey_InvalidFormat(t *testing.T) {
 	defer os.Remove(tmpFile.Name())
 
 	// Write invalid PEM data
-	if _, err := tmpFile.WriteString("not valid pem data"); err != nil {
-		t.Fatalf("Failed to write temp file: %v", err)
+	if _, writeErr := tmpFile.WriteString("not valid pem data"); writeErr != nil {
+		t.Fatalf("Failed to write temp file: %v", writeErr)
 	}
 	tmpFile.Close()
 
 	_, err = loadPublicKey(tmpFile.Name())
-	if err != ErrInvalidKeyFormat {
+	if !errors.Is(err, ErrInvalidKeyFormat) {
 		t.Errorf("loadPublicKey() error = %v, want ErrInvalidKeyFormat", err)
 	}
 }
 
 func TestLoadPrivateKey_NotFound(t *testing.T) {
 	_, err := loadPrivateKey("/nonexistent/path/to/key.pem")
-	if err != ErrKeyNotFound {
+	if !errors.Is(err, ErrKeyNotFound) {
 		t.Errorf("loadPrivateKey() error = %v, want ErrKeyNotFound", err)
 	}
 }
 
 func TestLoadPublicKey_NotFound(t *testing.T) {
 	_, err := loadPublicKey("/nonexistent/path/to/key.pem")
-	if err != ErrKeyNotFound {
+	if !errors.Is(err, ErrKeyNotFound) {
 		t.Errorf("loadPublicKey() error = %v, want ErrKeyNotFound", err)
 	}
 }

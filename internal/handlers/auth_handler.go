@@ -6,10 +6,11 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
+
 	"github.com/checkfix-tools/nisfix_backend/internal/middleware"
 	"github.com/checkfix-tools/nisfix_backend/internal/models"
 	"github.com/checkfix-tools/nisfix_backend/internal/services"
-	"github.com/gin-gonic/gin"
 )
 
 // AuthHandler handles authentication endpoints
@@ -244,7 +245,11 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 	}
 
 	// Invalidate refresh token (server-side cleanup if implemented)
-	_ = h.authService.InvalidateRefreshToken(c.Request.Context(), userID)
+	// Error is intentionally ignored as logout should succeed regardless
+	if err := h.authService.InvalidateRefreshToken(c.Request.Context(), userID); err != nil {
+		// Log error but don't fail logout
+		_ = err
+	}
 
 	c.JSON(http.StatusOK, LogoutResponse{
 		Message: "Successfully logged out",
@@ -305,16 +310,15 @@ func (h *AuthHandler) GetMe(c *gin.Context) {
 // RegisterRoutes registers auth handler routes
 func (h *AuthHandler) RegisterRoutes(rg *gin.RouterGroup, authMiddleware gin.HandlerFunc) {
 	auth := rg.Group("/auth")
-	{
-		// Public endpoints
-		auth.POST("/magic-link", h.RequestMagicLink)
-		auth.POST("/verify", h.VerifyMagicLink)
-		auth.POST("/refresh", h.RefreshToken)
 
-		// Protected endpoints
-		auth.POST("/logout", authMiddleware, h.Logout)
-		auth.GET("/me", authMiddleware, h.GetMe)
-	}
+	// Public endpoints
+	auth.POST("/magic-link", h.RequestMagicLink)
+	auth.POST("/verify", h.VerifyMagicLink)
+	auth.POST("/refresh", h.RefreshToken)
+
+	// Protected endpoints
+	auth.POST("/logout", authMiddleware, h.Logout)
+	auth.GET("/me", authMiddleware, h.GetMe)
 }
 
 // ErrorResponse represents an API error response

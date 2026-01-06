@@ -6,10 +6,11 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gin-gonic/gin"
+
 	"github.com/checkfix-tools/nisfix_backend/internal/middleware"
 	"github.com/checkfix-tools/nisfix_backend/internal/models"
 	"github.com/checkfix-tools/nisfix_backend/internal/repository"
-	"github.com/gin-gonic/gin"
 )
 
 // OrganizationHandler handles organization management endpoints
@@ -27,17 +28,17 @@ func NewOrganizationHandler(orgRepo repository.OrganizationRepository) *Organiza
 
 // OrganizationResponse represents an organization in API responses
 type OrganizationResponse struct {
-	ID           string                      `json:"id"`
-	Type         string                      `json:"type"`
-	Name         string                      `json:"name"`
-	Slug         string                      `json:"slug"`
-	Domain       string                      `json:"domain,omitempty"`
-	ContactEmail string                      `json:"contact_email,omitempty"`
-	ContactPhone string                      `json:"contact_phone,omitempty"`
-	Address      *AddressResponse            `json:"address,omitempty"`
+	ID           string                       `json:"id"`
+	Type         string                       `json:"type"`
+	Name         string                       `json:"name"`
+	Slug         string                       `json:"slug"`
+	Domain       string                       `json:"domain,omitempty"`
+	ContactEmail string                       `json:"contact_email,omitempty"`
+	ContactPhone string                       `json:"contact_phone,omitempty"`
+	Address      *AddressResponse             `json:"address,omitempty"`
 	Settings     OrganizationSettingsResponse `json:"settings"`
-	CreatedAt    time.Time                   `json:"created_at"`
-	UpdatedAt    time.Time                   `json:"updated_at"`
+	CreatedAt    time.Time                    `json:"created_at"`
+	UpdatedAt    time.Time                    `json:"updated_at"`
 }
 
 // AddressResponse represents an address in API responses
@@ -60,12 +61,12 @@ type OrganizationSettingsResponse struct {
 
 // UpdateOrganizationRequest represents an organization update request
 type UpdateOrganizationRequest struct {
-	Name         *string                    `json:"name,omitempty"`
-	Domain       *string                    `json:"domain,omitempty"`
-	ContactEmail *string                    `json:"contact_email,omitempty"`
-	ContactPhone *string                    `json:"contact_phone,omitempty"`
-	Address      *UpdateAddressRequest      `json:"address,omitempty"`
-	Settings     *UpdateSettingsRequest     `json:"settings,omitempty"`
+	Name         *string                `json:"name,omitempty"`
+	Domain       *string                `json:"domain,omitempty"`
+	ContactEmail *string                `json:"contact_email,omitempty"`
+	ContactPhone *string                `json:"contact_phone,omitempty"`
+	Address      *UpdateAddressRequest  `json:"address,omitempty"`
+	Settings     *UpdateSettingsRequest `json:"settings,omitempty"`
 }
 
 // UpdateAddressRequest represents an address update
@@ -78,12 +79,12 @@ type UpdateAddressRequest struct {
 
 // UpdateSettingsRequest represents settings update
 type UpdateSettingsRequest struct {
-	DefaultDueDays       *int      `json:"default_due_days,omitempty"`
-	RequireCheckFix      *bool     `json:"require_checkfix,omitempty"`
-	MinCheckFixGrade     *string   `json:"min_checkfix_grade,omitempty"`
-	NotificationEmails   []string  `json:"notification_emails,omitempty"`
-	DefaultLanguage      *string   `json:"default_language,omitempty"`
-	NotificationsEnabled *bool     `json:"notifications_enabled,omitempty"`
+	DefaultDueDays       *int     `json:"default_due_days,omitempty"`
+	RequireCheckFix      *bool    `json:"require_checkfix,omitempty"`
+	MinCheckFixGrade     *string  `json:"min_checkfix_grade,omitempty"`
+	NotificationEmails   []string `json:"notification_emails,omitempty"`
+	DefaultLanguage      *string  `json:"default_language,omitempty"`
+	NotificationsEnabled *bool    `json:"notifications_enabled,omitempty"`
 }
 
 // GetOrganization handles GET /api/v1/organization
@@ -365,12 +366,10 @@ func (h *OrganizationHandler) UpdateOrganizationSettings(c *gin.Context) {
 func (h *OrganizationHandler) RegisterRoutes(rg *gin.RouterGroup, authMiddleware gin.HandlerFunc) {
 	org := rg.Group("/organization")
 	org.Use(authMiddleware)
-	{
-		org.GET("", h.GetOrganization)
-		org.PATCH("", h.UpdateOrganization)
-		org.GET("/settings", h.GetOrganizationSettings)
-		org.PATCH("/settings", h.UpdateOrganizationSettings)
-	}
+	org.GET("", h.GetOrganization)
+	org.PATCH("", h.UpdateOrganization)
+	org.GET("/settings", h.GetOrganizationSettings)
+	org.PATCH("/settings", h.UpdateOrganizationSettings)
 }
 
 // toOrganizationResponse converts an organization to API response

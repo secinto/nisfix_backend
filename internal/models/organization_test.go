@@ -211,10 +211,10 @@ func TestOrganization_IsSupplier(t *testing.T) {
 func TestOrganization_HasCheckFixLinked(t *testing.T) {
 	now := time.Now()
 	tests := []struct {
-		name            string
-		checkFixID      string
-		checkFixLinked  *time.Time
-		expected        bool
+		name           string
+		checkFixID     string
+		checkFixLinked *time.Time
+		expected       bool
 	}{
 		{"Both set", "account123", &now, true},
 		{"ID only", "account123", nil, false},

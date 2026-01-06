@@ -7,19 +7,20 @@ import (
 	"fmt"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"github.com/checkfix-tools/nisfix_backend/internal/models"
 	"github.com/checkfix-tools/nisfix_backend/internal/repository"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Custom errors for response service
 var (
-	ErrResponseNotFound       = errors.New("response not found")
-	ErrResponseAlreadyExists  = errors.New("response already exists for this requirement")
+	ErrResponseNotFound         = errors.New("response not found")
+	ErrResponseAlreadyExists    = errors.New("response already exists for this requirement")
 	ErrResponseAlreadySubmitted = errors.New("response has already been submitted")
-	ErrCannotStartResponse    = errors.New("cannot start response for this requirement")
-	ErrSubmissionNotFound     = errors.New("submission not found")
-	ErrInvalidAnswer          = errors.New("invalid answer")
+	ErrCannotStartResponse      = errors.New("cannot start response for this requirement")
+	ErrSubmissionNotFound       = errors.New("submission not found")
+	ErrInvalidAnswer            = errors.New("invalid answer")
 )
 
 // ResponseService handles supplier response business logic

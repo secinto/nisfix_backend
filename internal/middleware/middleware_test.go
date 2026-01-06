@@ -6,10 +6,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/checkfix-tools/nisfix_backend/internal/auth"
-	"github.com/checkfix-tools/nisfix_backend/internal/models"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+
+	"github.com/checkfix-tools/nisfix_backend/internal/auth"
+	"github.com/checkfix-tools/nisfix_backend/internal/models"
 )
 
 func init() {

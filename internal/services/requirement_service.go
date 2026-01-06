@@ -7,16 +7,17 @@ import (
 	"fmt"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"github.com/checkfix-tools/nisfix_backend/internal/models"
 	"github.com/checkfix-tools/nisfix_backend/internal/repository"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Custom errors for requirement service
 var (
-	ErrRequirementNotFound     = errors.New("requirement not found")
-	ErrInvalidRequirementType  = errors.New("invalid requirement type")
-	ErrRelationshipNotActive   = errors.New("relationship is not active")
+	ErrRequirementNotFound       = errors.New("requirement not found")
+	ErrInvalidRequirementType    = errors.New("invalid requirement type")
+	ErrRelationshipNotActive     = errors.New("relationship is not active")
 	ErrQuestionnaireNotPublished = errors.New("questionnaire is not published")
 )
 
@@ -47,31 +48,31 @@ type RequirementService interface {
 
 // CreateRequirementRequest represents the request to create a requirement
 type CreateRequirementRequest struct {
-	RelationshipID   string            `json:"relationship_id" binding:"required"`
-	Type             models.RequirementType `json:"type" binding:"required"`
-	Title            string            `json:"title" binding:"required"`
-	Description      string            `json:"description,omitempty"`
-	Priority         models.Priority   `json:"priority,omitempty"`
-	DueDate          *time.Time        `json:"due_date,omitempty"`
+	RelationshipID string                 `json:"relationship_id" binding:"required"`
+	Type           models.RequirementType `json:"type" binding:"required"`
+	Title          string                 `json:"title" binding:"required"`
+	Description    string                 `json:"description,omitempty"`
+	Priority       models.Priority        `json:"priority,omitempty"`
+	DueDate        *time.Time             `json:"due_date,omitempty"`
 
 	// For Questionnaire requirements
-	QuestionnaireID  *string           `json:"questionnaire_id,omitempty"`
-	PassingScore     *int              `json:"passing_score,omitempty"`
+	QuestionnaireID *string `json:"questionnaire_id,omitempty"`
+	PassingScore    *int    `json:"passing_score,omitempty"`
 
 	// For CheckFix requirements
-	MinimumGrade     *string           `json:"minimum_grade,omitempty"`
-	MaxReportAgeDays *int              `json:"max_report_age_days,omitempty"`
+	MinimumGrade     *string `json:"minimum_grade,omitempty"`
+	MaxReportAgeDays *int    `json:"max_report_age_days,omitempty"`
 }
 
 // UpdateRequirementRequest represents the request to update a requirement
 type UpdateRequirementRequest struct {
-	Title            *string           `json:"title,omitempty"`
-	Description      *string           `json:"description,omitempty"`
-	Priority         *models.Priority  `json:"priority,omitempty"`
-	DueDate          *time.Time        `json:"due_date,omitempty"`
-	PassingScore     *int              `json:"passing_score,omitempty"`
-	MinimumGrade     *string           `json:"minimum_grade,omitempty"`
-	MaxReportAgeDays *int              `json:"max_report_age_days,omitempty"`
+	Title            *string          `json:"title,omitempty"`
+	Description      *string          `json:"description,omitempty"`
+	Priority         *models.Priority `json:"priority,omitempty"`
+	DueDate          *time.Time       `json:"due_date,omitempty"`
+	PassingScore     *int             `json:"passing_score,omitempty"`
+	MinimumGrade     *string          `json:"minimum_grade,omitempty"`
+	MaxReportAgeDays *int             `json:"max_report_age_days,omitempty"`
 }
 
 // RequirementFilters contains filters for listing requirements
@@ -83,14 +84,14 @@ type RequirementFilters struct {
 
 // RequirementStats contains requirement statistics
 type RequirementStats struct {
-	Total       int64 `json:"total"`
-	Pending     int64 `json:"pending"`
-	InProgress  int64 `json:"in_progress"`
-	Submitted   int64 `json:"submitted"`
-	Approved    int64 `json:"approved"`
-	Rejected    int64 `json:"rejected"`
-	Expired     int64 `json:"expired"`
-	Overdue     int64 `json:"overdue"`
+	Total      int64 `json:"total"`
+	Pending    int64 `json:"pending"`
+	InProgress int64 `json:"in_progress"`
+	Submitted  int64 `json:"submitted"`
+	Approved   int64 `json:"approved"`
+	Rejected   int64 `json:"rejected"`
+	Expired    int64 `json:"expired"`
+	Overdue    int64 `json:"overdue"`
 }
 
 // requirementService implements RequirementService

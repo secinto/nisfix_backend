@@ -394,17 +394,17 @@ func TestRequirement_DaysUntilDue(t *testing.T) {
 
 func TestRequirement_NeedsReminder(t *testing.T) {
 	userID := primitive.NewObjectID()
-	inSevenDays := time.Now().Add(7 * 24 * time.Hour)  // 7 full days
-	inOneDay := time.Now().Add(24 * time.Hour)          // 1 full day
+	inSevenDays := time.Now().Add(7 * 24 * time.Hour) // 7 full days
+	inOneDay := time.Now().Add(24 * time.Hour)        // 1 full day
 	reminderSent := time.Now()
 
 	tests := []struct {
-		name           string
-		dueDate        *time.Time
-		reminderSent   *time.Time
-		status         RequirementStatus
-		daysBefore     int
-		expected       bool
+		name         string
+		dueDate      *time.Time
+		reminderSent *time.Time
+		status       RequirementStatus
+		daysBefore   int
+		expected     bool
 	}{
 		{"No due date", nil, nil, RequirementStatusPending, 7, false},
 		{"Reminder already sent", &inOneDay, &reminderSent, RequirementStatusPending, 7, false},

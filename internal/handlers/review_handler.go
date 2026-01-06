@@ -6,10 +6,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/checkfix-tools/nisfix_backend/internal/middleware"
-	"github.com/checkfix-tools/nisfix_backend/internal/services"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+
+	"github.com/checkfix-tools/nisfix_backend/internal/middleware"
+	"github.com/checkfix-tools/nisfix_backend/internal/services"
 )
 
 // ReviewHandler handles requirement review endpoints
@@ -33,9 +34,9 @@ type ReviewActionRequest struct {
 
 // ReviewSubmissionResponse represents a submission for review
 type ReviewSubmissionResponse struct {
-	Requirement RequirementResponse           `json:"requirement"`
-	Response    *ReviewResponseDetails        `json:"response,omitempty"`
-	Submission  *ReviewSubmissionDetails      `json:"submission,omitempty"`
+	Requirement RequirementResponse      `json:"requirement"`
+	Response    *ReviewResponseDetails   `json:"response,omitempty"`
+	Submission  *ReviewSubmissionDetails `json:"submission,omitempty"`
 }
 
 // ReviewResponseDetails represents response details in review
@@ -55,15 +56,15 @@ type ReviewResponseDetails struct {
 
 // ReviewSubmissionDetails represents submission details in review
 type ReviewSubmissionDetails struct {
-	ID               string                      `json:"id"`
-	TotalScore       int                         `json:"total_score"`
-	MaxPossibleScore int                         `json:"max_possible_score"`
-	PercentageScore  float64                     `json:"percentage_score"`
-	Passed           bool                        `json:"passed"`
-	MustPassFailed   bool                        `json:"must_pass_failed"`
-	TopicScores      []TopicScoreResponse        `json:"topic_scores"`
-	Answers          []SubmissionAnswerResponse  `json:"answers"`
-	CompletionMins   int                         `json:"completion_time_minutes"`
+	ID               string                     `json:"id"`
+	TotalScore       int                        `json:"total_score"`
+	MaxPossibleScore int                        `json:"max_possible_score"`
+	PercentageScore  float64                    `json:"percentage_score"`
+	Passed           bool                       `json:"passed"`
+	MustPassFailed   bool                       `json:"must_pass_failed"`
+	TopicScores      []TopicScoreResponse       `json:"topic_scores"`
+	Answers          []SubmissionAnswerResponse `json:"answers"`
+	CompletionMins   int                        `json:"completion_time_minutes"`
 }
 
 // TopicScoreResponse represents a topic score

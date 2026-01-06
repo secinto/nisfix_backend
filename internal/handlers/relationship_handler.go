@@ -7,12 +7,13 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"github.com/checkfix-tools/nisfix_backend/internal/middleware"
 	"github.com/checkfix-tools/nisfix_backend/internal/models"
 	"github.com/checkfix-tools/nisfix_backend/internal/repository"
 	"github.com/checkfix-tools/nisfix_backend/internal/services"
-	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // RelationshipHandler handles supplier relationship endpoints
@@ -30,29 +31,29 @@ func NewRelationshipHandler(relationshipService services.RelationshipService) *R
 
 // InviteSupplierRequest represents the invite supplier request body
 type InviteSupplierRequest struct {
-	Email            string `json:"email" binding:"required,email"`
-	Classification   string `json:"classification,omitempty"`
-	Notes            string `json:"notes,omitempty"`
+	Email            string   `json:"email" binding:"required,email"`
+	Classification   string   `json:"classification,omitempty"`
+	Notes            string   `json:"notes,omitempty"`
 	ServicesProvided []string `json:"services_provided,omitempty"`
-	ContractRef      string `json:"contract_ref,omitempty"`
+	ContractRef      string   `json:"contract_ref,omitempty"`
 }
 
 // RelationshipResponse represents a relationship in API responses
 type RelationshipResponse struct {
-	ID               string               `json:"id"`
-	CompanyID        string               `json:"company_id"`
-	SupplierID       *string              `json:"supplier_id,omitempty"`
-	InvitedEmail     string               `json:"invited_email"`
-	Status           string               `json:"status"`
-	Classification   string               `json:"classification"`
-	Notes            string               `json:"notes,omitempty"`
-	ServicesProvided []string             `json:"services_provided,omitempty"`
-	ContractRef      string               `json:"contract_ref,omitempty"`
-	InvitedAt        time.Time            `json:"invited_at"`
-	AcceptedAt       *time.Time           `json:"accepted_at,omitempty"`
+	ID               string                 `json:"id"`
+	CompanyID        string                 `json:"company_id"`
+	SupplierID       *string                `json:"supplier_id,omitempty"`
+	InvitedEmail     string                 `json:"invited_email"`
+	Status           string                 `json:"status"`
+	Classification   string                 `json:"classification"`
+	Notes            string                 `json:"notes,omitempty"`
+	ServicesProvided []string               `json:"services_provided,omitempty"`
+	ContractRef      string                 `json:"contract_ref,omitempty"`
+	InvitedAt        time.Time              `json:"invited_at"`
+	AcceptedAt       *time.Time             `json:"accepted_at,omitempty"`
 	StatusHistory    []StatusChangeResponse `json:"status_history,omitempty"`
-	CreatedAt        time.Time            `json:"created_at"`
-	UpdatedAt        time.Time            `json:"updated_at"`
+	CreatedAt        time.Time              `json:"created_at"`
+	UpdatedAt        time.Time              `json:"updated_at"`
 }
 
 // StatusChangeResponse represents a status change in API responses
@@ -213,7 +214,7 @@ func (h *RelationshipHandler) ListSuppliers(c *gin.Context) {
 	if sortBy := c.Query("sort_by"); sortBy != "" {
 		opts.SortBy = sortBy
 	}
-	if sortDir := c.Query("sort_dir"); sortDir == "asc" {
+	if sortDir := c.Query("sort_dir"); sortDir == sortDirectionAsc {
 		opts.SortDir = 1
 	}
 

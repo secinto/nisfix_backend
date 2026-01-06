@@ -7,12 +7,13 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"github.com/checkfix-tools/nisfix_backend/internal/middleware"
 	"github.com/checkfix-tools/nisfix_backend/internal/models"
 	"github.com/checkfix-tools/nisfix_backend/internal/repository"
 	"github.com/checkfix-tools/nisfix_backend/internal/services"
-	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // SupplierPortalHandler handles supplier-side endpoints
@@ -38,14 +39,14 @@ func NewSupplierPortalHandler(
 
 // CompanyRelationshipResponse represents a company relationship for suppliers
 type CompanyRelationshipResponse struct {
-	ID               string     `json:"id"`
-	CompanyID        string     `json:"company_id"`
-	CompanyName      string     `json:"company_name,omitempty"`
-	Status           string     `json:"status"`
-	Classification   string     `json:"classification"`
-	InvitedAt        time.Time  `json:"invited_at"`
-	AcceptedAt       *time.Time `json:"accepted_at,omitempty"`
-	PendingRequirements int     `json:"pending_requirements"`
+	ID                  string     `json:"id"`
+	CompanyID           string     `json:"company_id"`
+	CompanyName         string     `json:"company_name,omitempty"`
+	Status              string     `json:"status"`
+	Classification      string     `json:"classification"`
+	InvitedAt           time.Time  `json:"invited_at"`
+	AcceptedAt          *time.Time `json:"accepted_at,omitempty"`
+	PendingRequirements int        `json:"pending_requirements"`
 }
 
 // SupplierRequirementResponse represents a requirement from supplier's view
@@ -71,17 +72,17 @@ type SupplierRequirementResponse struct {
 
 // SupplierResponseResponse represents a response in API responses
 type SupplierResponseResponse struct {
-	ID               string             `json:"id"`
-	RequirementID    string             `json:"requirement_id"`
-	SupplierID       string             `json:"supplier_id"`
-	Score            *int               `json:"score,omitempty"`
-	MaxScore         *int               `json:"max_score,omitempty"`
-	Passed           *bool              `json:"passed,omitempty"`
-	Grade            *string            `json:"grade,omitempty"`
-	DraftAnswerCount int                `json:"draft_answer_count"`
-	IsSubmitted      bool               `json:"is_submitted"`
-	StartedAt        time.Time          `json:"started_at"`
-	SubmittedAt      *time.Time         `json:"submitted_at,omitempty"`
+	ID               string                `json:"id"`
+	RequirementID    string                `json:"requirement_id"`
+	SupplierID       string                `json:"supplier_id"`
+	Score            *int                  `json:"score,omitempty"`
+	MaxScore         *int                  `json:"max_score,omitempty"`
+	Passed           *bool                 `json:"passed,omitempty"`
+	Grade            *string               `json:"grade,omitempty"`
+	DraftAnswerCount int                   `json:"draft_answer_count"`
+	IsSubmitted      bool                  `json:"is_submitted"`
+	StartedAt        time.Time             `json:"started_at"`
+	SubmittedAt      *time.Time            `json:"submitted_at,omitempty"`
 	DraftAnswers     []DraftAnswerResponse `json:"draft_answers,omitempty"`
 }
 
@@ -95,12 +96,12 @@ type DraftAnswerResponse struct {
 
 // SupplierDashboardResponse represents the supplier dashboard
 type SupplierDashboardResponse struct {
-	TotalCompanies       int64                  `json:"total_companies"`
-	PendingInvitations   int64                  `json:"pending_invitations"`
-	PendingRequirements  int64                  `json:"pending_requirements"`
-	OverdueRequirements  int64                  `json:"overdue_requirements"`
-	SubmittedRequirements int64                 `json:"submitted_requirements"`
-	RecentRequirements   []SupplierRequirementResponse `json:"recent_requirements"`
+	TotalCompanies        int64                         `json:"total_companies"`
+	PendingInvitations    int64                         `json:"pending_invitations"`
+	PendingRequirements   int64                         `json:"pending_requirements"`
+	OverdueRequirements   int64                         `json:"overdue_requirements"`
+	SubmittedRequirements int64                         `json:"submitted_requirements"`
+	RecentRequirements    []SupplierRequirementResponse `json:"recent_requirements"`
 }
 
 // PaginatedSupplierRequirementsResponse represents paginated requirements

@@ -7,12 +7,13 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"github.com/checkfix-tools/nisfix_backend/internal/middleware"
 	"github.com/checkfix-tools/nisfix_backend/internal/models"
 	"github.com/checkfix-tools/nisfix_backend/internal/repository"
 	"github.com/checkfix-tools/nisfix_backend/internal/services"
-	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // RequirementHandler handles requirement endpoints
@@ -286,7 +287,7 @@ func (h *RequirementHandler) ListRequirements(c *gin.Context) {
 	if sortBy := c.Query("sort_by"); sortBy != "" {
 		opts.SortBy = sortBy
 	}
-	if sortDir := c.Query("sort_dir"); sortDir == "asc" {
+	if sortDir := c.Query("sort_dir"); sortDir == sortDirectionAsc {
 		opts.SortDir = 1
 	}
 
