@@ -200,6 +200,107 @@ func (r *MongoQuestionnaireTemplateRepository) SearchTemplates(ctx context.Conte
 	}, nil
 }
 
+// ListAvailableTemplates lists templates available to an organization
+// Returns: system templates + globally published + org's own templates (any visibility)
+func (r *MongoQuestionnaireTemplateRepository) ListAvailableTemplates(ctx context.Context, orgID primitive.ObjectID, category *models.TemplateCategory, opts PaginationOptions) (*PaginatedResult[models.QuestionnaireTemplate], error) {
+	// Build filter: system OR global-published OR owned by org
+	filter := bson.M{
+		"$or": []bson.M{
+			{"is_system": true},
+			{"visibility": models.TemplateVisibilityGlobal},
+			{"created_by_org_id": orgID},
+		},
+	}
+
+	// Add category filter if specified
+	if category != nil {
+		filter["category"] = *category
+	}
+
+	// Count total
+	total, err := r.collection.CountDocuments(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	// Apply pagination
+	skip := int64((opts.Page - 1) * opts.Limit)
+	findOpts := options.Find().
+		SetSkip(skip).
+		SetLimit(int64(opts.Limit)).
+		SetSort(bson.D{
+			{Key: "is_system", Value: -1},       // System templates first
+			{Key: "visibility", Value: -1},      // Then by visibility (GLOBAL > LOCAL > DRAFT)
+			{Key: opts.SortBy, Value: opts.SortDir},
+		})
+
+	cursor, err := r.collection.Find(ctx, filter, findOpts)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
+
+	var templates []models.QuestionnaireTemplate
+	if err := cursor.All(ctx, &templates); err != nil {
+		return nil, err
+	}
+
+	totalPages := int(total) / opts.Limit
+	if int(total)%opts.Limit > 0 {
+		totalPages++
+	}
+
+	return &PaginatedResult[models.QuestionnaireTemplate]{
+		Items:      templates,
+		TotalCount: total,
+		Page:       opts.Page,
+		Limit:      opts.Limit,
+		TotalPages: totalPages,
+	}, nil
+}
+
+// ListByUser lists templates created by a specific user
+func (r *MongoQuestionnaireTemplateRepository) ListByUser(ctx context.Context, userID primitive.ObjectID, opts PaginationOptions) (*PaginatedResult[models.QuestionnaireTemplate], error) {
+	filter := bson.M{"created_by_user": userID}
+
+	// Count total
+	total, err := r.collection.CountDocuments(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	// Apply pagination
+	skip := int64((opts.Page - 1) * opts.Limit)
+	findOpts := options.Find().
+		SetSkip(skip).
+		SetLimit(int64(opts.Limit)).
+		SetSort(bson.D{{Key: opts.SortBy, Value: opts.SortDir}})
+
+	cursor, err := r.collection.Find(ctx, filter, findOpts)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx) //nolint:errcheck // defer close
+
+	var templates []models.QuestionnaireTemplate
+	if err := cursor.All(ctx, &templates); err != nil {
+		return nil, err
+	}
+
+	totalPages := int(total) / opts.Limit
+	if int(total)%opts.Limit > 0 {
+		totalPages++
+	}
+
+	return &PaginatedResult[models.QuestionnaireTemplate]{
+		Items:      templates,
+		TotalCount: total,
+		Page:       opts.Page,
+		Limit:      opts.Limit,
+		TotalPages: totalPages,
+	}, nil
+}
+
 // Ensure MongoQuestionnaireTemplateRepository implements QuestionnaireTemplateRepository
 var _ QuestionnaireTemplateRepository = (*MongoQuestionnaireTemplateRepository)(nil)
 

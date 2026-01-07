@@ -131,15 +131,8 @@ func main() {
 	submissionRepo := repository.NewSubmissionRepository(dbClient)
 	verificationRepo := repository.NewVerificationRepository(dbClient)
 
-	// Initialize mail service
-	// #IMPLEMENTATION_DECISION: Use mock in development, HTTP service in production
-	var mailService services.MailService
-	if cfg.IsDevelopment() {
-		log.Println("Using mock mail service in development mode")
-		mailService = services.NewMockMailService()
-	} else {
-		mailService = services.NewHTTPMailService(cfg.MailServiceURL, cfg.MailAPIKey)
-	}
+	// Initialize mail service (always use HTTP service)
+	mailService := services.NewHTTPMailService(&cfg.Mail)
 
 	// Initialize auth service
 	authServiceCfg := services.AuthServiceConfig{
@@ -171,6 +164,9 @@ func main() {
 		templateRepo,
 		questionRepo,
 	)
+
+	// Initialize template service
+	templateService := services.NewTemplateService(templateRepo)
 
 	// Initialize requirement service
 	requirementService := services.NewRequirementService(
@@ -219,7 +215,7 @@ func main() {
 	healthHandler := handlers.NewHealthHandler(dbClient, Version)
 	relationshipHandler := handlers.NewRelationshipHandler(relationshipService)
 	questionnaireHandler := handlers.NewQuestionnaireHandler(questionnaireService)
-	templateHandler := handlers.NewTemplateHandler(templateRepo)
+	templateHandler := handlers.NewTemplateHandler(templateRepo, templateService)
 	requirementHandler := handlers.NewRequirementHandler(requirementService)
 	supplierPortalHandler := handlers.NewSupplierPortalHandler(relationshipRepo, requirementRepo, responseService)
 	reviewHandler := handlers.NewReviewHandler(reviewService)

@@ -84,28 +84,12 @@ type VerifyMagicLinkRequest struct {
 
 // VerifyMagicLinkResponse represents the verify response
 type VerifyMagicLinkResponse struct {
-	AccessToken  string       `json:"access_token"`
-	RefreshToken string       `json:"refresh_token"`
-	ExpiresAt    int64        `json:"expires_at"`
-	ExpiresIn    int64        `json:"expires_in"`
-	User         UserResponse `json:"user"`
-	Organization OrgResponse  `json:"organization"`
-}
-
-// UserResponse represents user data in API responses
-type UserResponse struct {
-	ID    string `json:"id"`
-	Email string `json:"email"`
-	Name  string `json:"name,omitempty"`
-	Role  string `json:"role"`
-}
-
-// OrgResponse represents organization data in API responses
-type OrgResponse struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-	Slug string `json:"slug"`
-	Type string `json:"type"`
+	AccessToken  string              `json:"access_token"`
+	RefreshToken string              `json:"refresh_token"`
+	ExpiresAt    int64               `json:"expires_at"`
+	ExpiresIn    int64               `json:"expires_in"`
+	User         *models.User        `json:"user"`
+	Organization *models.Organization `json:"organization"`
 }
 
 // VerifyMagicLink handles POST /api/v1/auth/verify
@@ -153,18 +137,8 @@ func (h *AuthHandler) VerifyMagicLink(c *gin.Context) {
 		RefreshToken: tokenPair.RefreshToken,
 		ExpiresAt:    tokenPair.ExpiresAt.Unix(),
 		ExpiresIn:    tokenPair.ExpiresIn,
-		User: UserResponse{
-			ID:    user.ID.Hex(),
-			Email: user.Email,
-			Name:  user.Name,
-			Role:  string(user.Role),
-		},
-		Organization: OrgResponse{
-			ID:   org.ID.Hex(),
-			Name: org.Name,
-			Slug: org.Slug,
-			Type: string(org.Type),
-		},
+		User:         user,
+		Organization: org,
 	})
 }
 
@@ -258,8 +232,8 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 
 // GetMeResponse represents the current user response
 type GetMeResponse struct {
-	User         UserResponse `json:"user"`
-	Organization OrgResponse  `json:"organization"`
+	User         *models.User         `json:"user"`
+	Organization *models.Organization `json:"organization"`
 }
 
 // GetMe handles GET /api/v1/auth/me
@@ -292,18 +266,8 @@ func (h *AuthHandler) GetMe(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, GetMeResponse{
-		User: UserResponse{
-			ID:    user.ID.Hex(),
-			Email: user.Email,
-			Name:  user.Name,
-			Role:  string(user.Role),
-		},
-		Organization: OrgResponse{
-			ID:   org.ID.Hex(),
-			Name: org.Name,
-			Slug: org.Slug,
-			Type: string(org.Type),
-		},
+		User:         user,
+		Organization: org,
 	})
 }
 
@@ -325,24 +289,4 @@ func (h *AuthHandler) RegisterRoutes(rg *gin.RouterGroup, authMiddleware gin.Han
 type ErrorResponse struct {
 	Error   string `json:"error"`
 	Message string `json:"message"`
-}
-
-// ToUserResponse converts a User model to UserResponse
-func ToUserResponse(user *models.User) UserResponse {
-	return UserResponse{
-		ID:    user.ID.Hex(),
-		Email: user.Email,
-		Name:  user.Name,
-		Role:  string(user.Role),
-	}
-}
-
-// ToOrgResponse converts an Organization model to OrgResponse
-func ToOrgResponse(org *models.Organization) OrgResponse {
-	return OrgResponse{
-		ID:   org.ID.Hex(),
-		Name: org.Name,
-		Slug: org.Slug,
-		Type: string(org.Type),
-	}
 }

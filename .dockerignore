@@ -35,7 +35,7 @@ Thumbs.db
 # Documentation (not needed in image)
 *.md
 !README.md
-docs/
+# docs/ - REQUIRED for Swagger generation
 implementation-plan.md
 
 # Local configuration

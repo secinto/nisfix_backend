@@ -48,6 +48,40 @@ func (tc TemplateCategory) IsSystemCategory() bool {
 	return tc != TemplateCategoryCustom
 }
 
+// TemplateVisibility represents the publishing scope of a template
+// #IMPLEMENTATION_DECISION: DRAFT (unpublished), LOCAL (org only), GLOBAL (all orgs)
+type TemplateVisibility string
+
+const (
+	TemplateVisibilityDraft  TemplateVisibility = "DRAFT"  // Not published yet
+	TemplateVisibilityLocal  TemplateVisibility = "LOCAL"  // Only visible to owning organization
+	TemplateVisibilityGlobal TemplateVisibility = "GLOBAL" // Available to all organizations
+)
+
+// MarshalJSON converts TemplateVisibility to lowercase for JSON serialization
+func (tv TemplateVisibility) MarshalJSON() ([]byte, error) {
+	return json.Marshal(strings.ToLower(string(tv)))
+}
+
+// UnmarshalJSON converts lowercase JSON to TemplateVisibility
+func (tv *TemplateVisibility) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return err
+	}
+	*tv = TemplateVisibility(strings.ToUpper(s))
+	return nil
+}
+
+// IsValid checks if the TemplateVisibility is a valid value
+func (tv TemplateVisibility) IsValid() bool {
+	switch tv {
+	case TemplateVisibilityDraft, TemplateVisibilityLocal, TemplateVisibilityGlobal:
+		return true
+	}
+	return false
+}
+
 // TemplateTopic represents a topic/section within a questionnaire template
 // #NORMALIZATION_DECISION: Embedded as topics are intrinsic to template structure
 type TemplateTopic struct {
@@ -70,6 +104,11 @@ type QuestionnaireTemplate struct {
 	// Ownership
 	IsSystem       bool                `bson:"is_system" json:"is_system"`
 	CreatedByOrgID *primitive.ObjectID `bson:"created_by_org_id,omitempty" json:"created_by_org_id,omitempty"`
+	CreatedByUser  *primitive.ObjectID `bson:"created_by_user,omitempty" json:"created_by_user,omitempty"` // User who created (for custom templates)
+
+	// Publishing
+	Visibility  TemplateVisibility  `bson:"visibility" json:"visibility"`             // DRAFT, LOCAL, or GLOBAL
+	PublishedBy *primitive.ObjectID `bson:"published_by,omitempty" json:"published_by,omitempty"` // User who published
 
 	// Configuration
 	DefaultPassingScore int `bson:"default_passing_score" json:"default_passing_score"`
@@ -119,6 +158,10 @@ func (qt *QuestionnaireTemplate) BeforeCreate() {
 	if qt.Tags == nil {
 		qt.Tags = []string{}
 	}
+	// Default visibility for new templates is DRAFT
+	if qt.Visibility == "" {
+		qt.Visibility = TemplateVisibilityDraft
+	}
 }
 
 // BeforeUpdate sets the UpdatedAt timestamp
@@ -126,16 +169,46 @@ func (qt *QuestionnaireTemplate) BeforeUpdate() {
 	qt.UpdatedAt = time.Now().UTC()
 }
 
-// Publish marks the template as published
-func (qt *QuestionnaireTemplate) Publish() {
+// Publish marks the template as published with the specified visibility
+func (qt *QuestionnaireTemplate) Publish(visibility TemplateVisibility, publisherID primitive.ObjectID) {
 	now := time.Now().UTC()
 	qt.PublishedAt = &now
 	qt.UpdatedAt = now
+	qt.Visibility = visibility
+	qt.PublishedBy = &publisherID
 }
 
-// IsPublished returns true if the template has been published
+// Unpublish reverts the template to draft status
+func (qt *QuestionnaireTemplate) Unpublish() {
+	qt.PublishedAt = nil
+	qt.PublishedBy = nil
+	qt.Visibility = TemplateVisibilityDraft
+	qt.UpdatedAt = time.Now().UTC()
+}
+
+// IsPublished returns true if the template has been published (LOCAL or GLOBAL)
 func (qt *QuestionnaireTemplate) IsPublished() bool {
-	return qt.PublishedAt != nil
+	return qt.Visibility == TemplateVisibilityLocal || qt.Visibility == TemplateVisibilityGlobal
+}
+
+// IsDraft returns true if the template is in draft status
+func (qt *QuestionnaireTemplate) IsDraft() bool {
+	return qt.Visibility == TemplateVisibilityDraft
+}
+
+// IsGlobal returns true if the template is published globally
+func (qt *QuestionnaireTemplate) IsGlobal() bool {
+	return qt.Visibility == TemplateVisibilityGlobal
+}
+
+// IsOwnedByUser returns true if the template was created by the specified user
+func (qt *QuestionnaireTemplate) IsOwnedByUser(userID primitive.ObjectID) bool {
+	return qt.CreatedByUser != nil && *qt.CreatedByUser == userID
+}
+
+// IsOwnedByOrg returns true if the template was created by the specified organization
+func (qt *QuestionnaireTemplate) IsOwnedByOrg(orgID primitive.ObjectID) bool {
+	return qt.CreatedByOrgID != nil && *qt.CreatedByOrgID == orgID
 }
 
 // IncrementUsage increments the usage count
@@ -145,15 +218,21 @@ func (qt *QuestionnaireTemplate) IncrementUsage() {
 }
 
 // CanBeEdited returns true if the template can be edited
-// System templates cannot be edited; custom templates can be edited before publishing
+// System templates cannot be edited; custom templates can only be edited while in draft
 func (qt *QuestionnaireTemplate) CanBeEdited() bool {
-	return !qt.IsSystem
+	return !qt.IsSystem && qt.IsDraft()
 }
 
 // CanBeDeleted returns true if the template can be deleted
-// System templates cannot be deleted; custom templates can be deleted if not used
+// System templates cannot be deleted; custom templates can be deleted if draft or unused
 func (qt *QuestionnaireTemplate) CanBeDeleted() bool {
-	return !qt.IsSystem && qt.UsageCount == 0
+	return !qt.IsSystem && (qt.IsDraft() || qt.UsageCount == 0)
+}
+
+// CanBeUnpublished returns true if the template can be reverted to draft
+// Can only unpublish if not in use by any questionnaires
+func (qt *QuestionnaireTemplate) CanBeUnpublished() bool {
+	return !qt.IsSystem && qt.IsPublished() && qt.UsageCount == 0
 }
 
 // GetTopicByID returns a topic by its ID

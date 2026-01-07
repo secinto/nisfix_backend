@@ -57,7 +57,10 @@ func (s *Seeder) SeedQuestionnaireTemplates(ctx context.Context) error {
 	docs := make([]interface{}, len(templates))
 	for i, t := range templates {
 		t.BeforeCreate()
-		t.Publish()
+		// System templates are always globally visible
+		t.Visibility = models.TemplateVisibilityGlobal
+		now := time.Now().UTC()
+		t.PublishedAt = &now
 		docs[i] = t
 	}
 

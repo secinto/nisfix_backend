@@ -9,7 +9,7 @@
 # ============================================================================
 
 # MongoDB connection URI [required]
-NISFIX_DATABASE_URI=mongodb://localhost:27017
+NISFIX_DATABASE_URI=mongodb://host.docker.internal:27017/nisfix
 
 # MongoDB database name (default: nisfix)
 NISFIX_DATABASE_NAME=nisfix
@@ -38,26 +38,17 @@ NISFIX_REFRESH_TOKEN_EXPIRY=720h
 
 # Base URL of the mailsendAPI service [required]
 # In development, mock service is used so this can be any value
-NISFIX_MAIL_BASE_URL=http://localhost:8000
+NISFIX_MAIL_BASE_URL=http://app:8080
 
 # API key for mailsendAPI authentication (32 characters) [required]
 # In development, mock service is used so this can be any value
-NISFIX_MAIL_API_KEY=your32characterapikeygoeshere12
+NISFIX_MAIL_API_KEY=I1tdnXJm730ZVE5sRSfpGzmxstDuXYN1
 
 # Sender display name (default: NisFix)
 NISFIX_MAIL_SENDER_NAME=NisFix
 
 # Project identifier for email tracking (default: nisfix)
 NISFIX_MAIL_PROJECT=nisfix
-
-# Template names (optional - have sensible defaults)
-# Auth templates
-NISFIX_MAIL_TPL_SECURE_LINK_DE=Nisfix_Secure_Link_DE
-NISFIX_MAIL_TPL_SECURE_LINK_EN=Nisfix_Secure_Link_EN
-
-# Supplier invitation templates
-NISFIX_MAIL_TPL_INVITE_SUPPLIER_DE=Nisfix_Invite_Supplier_DE
-NISFIX_MAIL_TPL_INVITE_SUPPLIER_EN=Nisfix_Invite_Supplier_EN
 
 # ============================================================================
 # CheckFix API Configuration
@@ -79,7 +70,7 @@ NISFIX_SERVER_PORT=8080
 
 # Application environment: development, staging, production (default: development)
 # Controls logging verbosity, mock services, Gin mode
-NISFIX_ENVIRONMENT=development
+NISFIX_ENVIRONMENT=staging
 
 # ============================================================================
 # Magic Link Configuration
@@ -87,7 +78,7 @@ NISFIX_ENVIRONMENT=development
 
 # Base URL for magic link generation [required]
 # This should point to your frontend application
-NISFIX_MAGIC_LINK_BASE_URL=http://localhost:3000
+NISFIX_MAGIC_LINK_BASE_URL=http://localhost:4002
 
 # Magic link expiry duration (default: 15m)
 NISFIX_MAGIC_LINK_EXPIRY=15m
@@ -100,8 +91,8 @@ NISFIX_INVITATION_EXPIRY=168h
 # ============================================================================
 
 # Allowed origins for CORS (comma-separated)
-# Default: http://localhost:3000
-NISFIX_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001
+# Default: http://localhost:4002
+NISFIX_ALLOWED_ORIGINS=http://localhost:4002,http://localhost:4001
 
 # ============================================================================
 # Rate Limiting

@@ -12,6 +12,25 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
+// MailConfig holds mail service configuration following checkfix_backend patterns.
+// #INTEGRATION_POINT: Used by mail service for template-based email delivery via mailsendAPI
+type MailConfig struct {
+	// Connection settings
+	BaseURL    string `envconfig:"BASE_URL" required:"true"`
+	APIKey     string `envconfig:"API_KEY" required:"true"`
+	SenderName string `envconfig:"SENDER_NAME" default:"NisFix"`
+	Project    string `envconfig:"PROJECT" default:"nisfix"`
+
+	// Template names (DE/EN variants)
+	// Auth templates
+	SecureLinkMailDE string `envconfig:"TPL_SECURE_LINK_DE" default:"Nisfix_Secure_Link_DE"`
+	SecureLinkMailEN string `envconfig:"TPL_SECURE_LINK_EN" default:"Nisfix_Secure_Link_EN"`
+
+	// Supplier invitation templates
+	InviteSupplierDE string `envconfig:"TPL_INVITE_SUPPLIER_DE" default:"Nisfix_Invite_Supplier_DE"`
+	InviteSupplierEN string `envconfig:"TPL_INVITE_SUPPLIER_EN" default:"Nisfix_Invite_Supplier_EN"`
+}
+
 // Config holds all application configuration loaded from environment variables.
 // #INTEGRATION_POINT: All services depend on this configuration
 type Config struct {
@@ -26,8 +45,7 @@ type Config struct {
 	RefreshTokenExpiry time.Duration `envconfig:"REFRESH_TOKEN_EXPIRY" default:"720h"` // 30 days
 
 	// Mail service configuration
-	MailServiceURL string `envconfig:"MAIL_SERVICE_URL" required:"true"`
-	MailAPIKey     string `envconfig:"MAIL_API_KEY" required:"true"`
+	Mail MailConfig `envconfig:"MAIL"`
 
 	// CheckFix API configuration
 	CheckFixAPIURL string `envconfig:"CHECKFIX_API_URL"`

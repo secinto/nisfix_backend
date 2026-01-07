@@ -8,7 +8,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
@@ -150,8 +149,8 @@ func (s *authService) RequestMagicLink(ctx context.Context, email string) error 
 		return fmt.Errorf("failed to create secure link: %w", err)
 	}
 
-	// Build magic link URL
-	magicLinkURL := fmt.Sprintf("%s/auth/verify?token=%s", s.magicLinkBase, identifier)
+	// Build magic link URL (path parameter to match frontend route /auth/verify/:token)
+	magicLinkURL := fmt.Sprintf("%s/auth/verify/%s", s.magicLinkBase, identifier)
 
 	// Send email
 	if err := s.mailService.SendMagicLink(ctx, email, user.Name, magicLinkURL); err != nil {
@@ -305,72 +304,4 @@ func generateSecureIdentifier() (string, error) {
 	return hex.EncodeToString(bytes), nil
 }
 
-// MockMailService is a mock implementation for testing
-// #TEST_ASSUMPTION: Replace with real mail service in production
-type MockMailService struct {
-	SentEmails []struct {
-		To      string
-		Subject string
-		Link    string
-	}
-}
-
-func (m *MockMailService) SendMagicLink(ctx context.Context, email, name, magicLink string) error {
-	m.SentEmails = append(m.SentEmails, struct {
-		To      string
-		Subject string
-		Link    string
-	}{To: email, Subject: "Magic Link", Link: magicLink})
-	return nil
-}
-
-func (m *MockMailService) SendInvitation(ctx context.Context, email, companyName, magicLink string) error {
-	m.SentEmails = append(m.SentEmails, struct {
-		To      string
-		Subject string
-		Link    string
-	}{To: email, Subject: "Invitation", Link: magicLink})
-	return nil
-}
-
-// NewMockMailService creates a mock mail service
-func NewMockMailService() *MockMailService {
-	return &MockMailService{
-		SentEmails: make([]struct {
-			To      string
-			Subject string
-			Link    string
-		}, 0),
-	}
-}
-
-// HTTPMailService implements MailService using HTTP calls
-// #INTEGRATION_POINT: Real mail service for production
-type HTTPMailService struct {
-	baseURL string
-	apiKey  string
-	timeout time.Duration
-}
-
-// NewHTTPMailService creates a new HTTP mail service
-func NewHTTPMailService(baseURL, apiKey string) *HTTPMailService {
-	return &HTTPMailService{
-		baseURL: baseURL,
-		apiKey:  apiKey,
-		timeout: 30 * time.Second,
-	}
-}
-
-// SendMagicLink sends a magic link email via HTTP
-// #COMPLETION_DRIVE: Assuming mail service API structure
-func (m *HTTPMailService) SendMagicLink(ctx context.Context, email, name, magicLink string) error {
-	// #IMPLEMENTATION_UNCERTAINTY: Mail service API contract not defined
-	// TODO: Implement actual HTTP call when mail service is ready
-	return nil
-}
-
-// SendInvitation sends an invitation email via HTTP
-func (m *HTTPMailService) SendInvitation(ctx context.Context, email, companyName, magicLink string) error {
-	// TODO: Implement actual HTTP call when mail service is ready
-	return nil
-}
+// NOTE: MailService implementations (HTTPMailService, MockMailService) are in mail_service.go

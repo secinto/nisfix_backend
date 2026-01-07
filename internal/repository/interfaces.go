@@ -142,6 +142,13 @@ type QuestionnaireTemplateRepository interface {
 
 	// SearchTemplates searches templates by name/description
 	SearchTemplates(ctx context.Context, query string, opts PaginationOptions) (*PaginatedResult[models.QuestionnaireTemplate], error)
+
+	// ListAvailableTemplates lists templates available to an organization
+	// Returns: system templates + globally published + org's own templates (any visibility)
+	ListAvailableTemplates(ctx context.Context, orgID primitive.ObjectID, category *models.TemplateCategory, opts PaginationOptions) (*PaginatedResult[models.QuestionnaireTemplate], error)
+
+	// ListByUser lists templates created by a specific user
+	ListByUser(ctx context.Context, userID primitive.ObjectID, opts PaginationOptions) (*PaginatedResult[models.QuestionnaireTemplate], error)
 }
 
 // QuestionnaireRepository defines operations for questionnaires

@@ -33,9 +33,16 @@ var (
 	ErrSecureLinkInvalid  = errors.New("secure link is invalid")
 
 	// Questionnaire template errors
-	ErrTemplateNotFound     = errors.New("questionnaire template not found")
-	ErrTemplateNotEditable  = errors.New("system templates cannot be edited")
-	ErrTemplateNotDeletable = errors.New("template cannot be deleted (in use)")
+	ErrTemplateNotFound         = errors.New("questionnaire template not found")
+	ErrTemplateNotEditable      = errors.New("template cannot be edited")
+	ErrTemplateNotDeletable     = errors.New("template cannot be deleted")
+	ErrTemplateNotOwnedByUser   = errors.New("template not owned by user")
+	ErrTemplateAlreadyPublished = errors.New("template is already published")
+	ErrTemplateNotPublished     = errors.New("template is not published")
+	ErrTemplateInUse            = errors.New("template is in use and cannot be modified")
+	ErrTemplateInvalidFormat    = errors.New("invalid template format")
+	ErrTemplateMissingFields    = errors.New("template missing required fields")
+	ErrTemplateInvalidVisibility = errors.New("invalid template visibility")
 
 	// Questionnaire errors
 	ErrQuestionnaireNotFound     = errors.New("questionnaire not found")
@@ -113,7 +120,10 @@ func IsValidationError(err error) bool {
 		errors.Is(err, ErrInvalidQuestionType) ||
 		errors.Is(err, ErrMissingQuestionOptions) ||
 		errors.Is(err, ErrInvalidOptionID) ||
-		errors.Is(err, ErrInvalidAnswerFormat)
+		errors.Is(err, ErrInvalidAnswerFormat) ||
+		errors.Is(err, ErrTemplateInvalidFormat) ||
+		errors.Is(err, ErrTemplateMissingFields) ||
+		errors.Is(err, ErrTemplateInvalidVisibility)
 }
 
 // IsAuthError returns true if the error is an authentication/authorization error
